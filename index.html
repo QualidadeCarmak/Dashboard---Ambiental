@@ -834,6 +834,9 @@ function pickModule(mod){
   renderData();
   toggleSide(false);
   window.scrollTo({top:0,behavior:'smooth'});
+  if(mod === 'licencas'){
+    refreshLicencasAndRender();
+  }
 }
 function pickUnit(unit){
   selectedUnit = unit || '';
@@ -1261,6 +1264,51 @@ function renderLicencas(){
   }).join('')||'<tr><td colspan="8" class="empty-state">Sem licenças no filtro</td></tr>';
 }
 
+
+/* ---- Supabase: Licenças ---- */
+function mapLicencaRow(row){
+  return {
+    id: row.id,
+    'CNPJ': row.cnpj || '',
+    'Localidade': row.localidade || '',
+    'Endereço': row.endereco || '',
+    'Tipo de Licença': row.tipo || '',
+    'Nº': row.numero || '',
+    'Órgão Emissor': row.orgao || '',
+    'Data Solicitação Renovação': row.data_solicitacao || '',
+    'Válida até': row.valida_ate || '',
+    'Status': row.status || '',
+    'Observações': row.observacoes || ''
+  };
+}
+
+async function loadLicencasFromCloud(){
+  if(!sb) return { ok:false, error:'Sem cliente Supabase' };
+  try{
+    const { data, error } = await sb
+      .from('licencas')
+      .select('*')
+      .order('localidade', { ascending: true });
+    if(error) throw error;
+    const rows = (data || []).map(mapLicencaRow);
+    DATA.docs.length = 0;
+    rows.forEach(r => DATA.docs.push(r));
+    console.info('[MA] Licenças carregadas do Supabase:', rows.length);
+    return { ok:true, count: rows.length };
+  }catch(e){
+    console.warn('[MA] Falha ao carregar licenças:', e);
+    return { ok:false, error: e.message || String(e) };
+  }
+}
+
+async function refreshLicencasAndRender(){
+  const res = await loadLicencasFromCloud();
+  if(selectedModule === 'licencas' && screen === 'data'){
+    try{ renderLicencas(); }catch(err){ console.warn(err); }
+  }
+  return res;
+}
+
 /* Boot — Supabase Auth */
 const SUPABASE_URL = 'https://rnxqogklpdlnupgttlcu.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJueHFvZ2tscGRsbnVwZ3R0bGN1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg4ODE2ODIsImV4cCI6MjEwNDQ1NzY4Mn0.pU6C01F69Ctmi-g5fcAK2LUJmOnQefxZZeCDL4Fag24';
@@ -1276,6 +1324,14 @@ function showAppAfterLogin(){
   document.getElementById('view-guia').classList.add('on');
   document.body.classList.add('on-guia');
   updateChrome();
+  // Carrega licenças do Supabase (substitui o embutido quando ok)
+  loadLicencasFromCloud().then(res=>{
+    if(res && res.ok){
+      console.info('[MA] Base de licenças sincronizada:', res.count);
+    } else if(res && res.error){
+      console.warn('[MA] Usando dados embutidos de licenças. Motivo:', res.error);
+    }
+  });
 }
 function showLoginScreen(){
   document.getElementById('login').classList.remove('hidden');
