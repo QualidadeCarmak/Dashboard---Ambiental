@@ -383,6 +383,61 @@ body.on-guia .side, body.on-guia .scrim{display:none!important}
 .chart-box{max-width:100%; overflow:hidden}
 .chart-box .chart-svg{max-height:180px; width:100%; height:auto; display:block}
 
+
+/* MODAL CRUD */
+.modal-bg{
+  display:none; position:fixed; inset:0; z-index:300;
+  background:rgba(11,46,31,.45); backdrop-filter:blur(4px);
+  align-items:center; justify-content:center; padding:16px;
+}
+.modal-bg.on{display:flex}
+.modal-box{
+  width:100%; max-width:560px; max-height:min(90vh,720px); overflow:auto;
+  background:var(--card); border-radius:16px; border:1px solid var(--line);
+  box-shadow:0 24px 64px rgba(0,0,0,.25); color:var(--ink);
+}
+.modal-box .mh{
+  padding:16px 20px; border-bottom:1px solid var(--line);
+  font-family:'Space Grotesk',sans-serif; font-size:16px; font-weight:700; color:var(--navy);
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+}
+.modal-box .mh button{
+  appearance:none; border:none; background:var(--tint); width:32px; height:32px;
+  border-radius:8px; cursor:pointer; font-size:16px; color:var(--ink-2);
+}
+.modal-box .mb{padding:16px 20px; display:flex; flex-direction:column; gap:12px}
+.modal-box .mf{display:flex; flex-direction:column; gap:4px}
+.modal-box .mf label{font-size:10px; text-transform:uppercase; letter-spacing:.04em; font-weight:700; color:var(--muted)}
+.modal-box .mf input, .modal-box .mf select, .modal-box .mf textarea{
+  padding:9px 11px; border:1px solid var(--line-2); border-radius:8px; font-size:13px; background:#fff; color:var(--ink);
+}
+.modal-box .mf textarea{min-height:72px; resize:vertical}
+.modal-box .grid2m{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+@media(max-width:560px){.modal-box .grid2m{grid-template-columns:1fr}}
+.modal-box .ma{
+  padding:12px 20px 16px; border-top:1px solid var(--line);
+  display:flex; gap:10px; justify-content:flex-end; flex-wrap:wrap;
+}
+.btn-ma{
+  appearance:none; border:none; border-radius:10px; padding:10px 16px;
+  font-size:13px; font-weight:700; cursor:pointer;
+}
+.btn-ma.primary{background:linear-gradient(135deg,var(--navy),var(--teal)); color:#fff}
+.btn-ma.gold{background:linear-gradient(135deg,var(--gold),var(--gold-2)); color:var(--navy)}
+.btn-ma.ghost{background:var(--tint); color:var(--ink-2); border:1px solid var(--line)}
+.btn-ma.danger{background:var(--crit-bg); color:var(--crit)}
+.btn-ma:disabled{opacity:.55; cursor:wait}
+.tbl-actions{display:flex; gap:6px; white-space:nowrap}
+.tbl-actions button{
+  appearance:none; border:1px solid var(--line); background:#fff; color:var(--ink-2);
+  padding:4px 9px; border-radius:6px; font-size:11px; font-weight:600; cursor:pointer;
+}
+.tbl-actions button:hover{border-color:var(--gold); color:var(--navy)}
+.tbl-actions button.del{color:var(--crit)}
+.sync-chip{
+  font-size:11px; color:var(--muted); margin-left:auto; align-self:center;
+}
+
 @media print{
   .topbar,.side,.scrim,.btn-ham{display:none!important}
   .main{margin:0;padding:12px}
@@ -615,6 +670,48 @@ body.on-guia .side, body.on-guia .scrim{display:none!important}
       <h3>Inventário completo</h3>
       <p class="panel-sub">Ordenado por prazo (mais crítico primeiro)</p>
       <div class="table-wrap" style="max-height:480px"><table class="data" id="tbl-licencas"><thead></thead><tbody></tbody></table></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Modal Licenças -->
+<div class="modal-bg" id="modal-lic" role="dialog" aria-modal="true">
+  <div class="modal-box">
+    <div class="mh">
+      <span id="modal-lic-title">Nova licença</span>
+      <button type="button" onclick="closeLicModal()" aria-label="Fechar">×</button>
+    </div>
+    <div class="mb">
+      <input type="hidden" id="lic_id">
+      <div class="grid2m">
+        <div class="mf"><label>CNPJ</label><input id="lic_cnpj" placeholder="00.000.000/0000-00"></div>
+        <div class="mf"><label>Status *</label>
+          <select id="lic_status">
+            <option>Ativa</option>
+            <option>Em andamento</option>
+            <option>Inativa</option>
+          </select>
+        </div>
+      </div>
+      <div class="mf"><label>Localidade</label><input id="lic_localidade" placeholder="Cidade/UF"></div>
+      <div class="mf"><label>Endereço</label><input id="lic_endereco" placeholder="Endereço completo"></div>
+      <div class="grid2m">
+        <div class="mf"><label>Tipo de licença *</label><input id="lic_tipo" list="dl-tipos" placeholder="LO, APPCI, Alvará…" required></div>
+        <div class="mf"><label>Número</label><input id="lic_numero" placeholder="Nº do documento"></div>
+      </div>
+      <div class="mf"><label>Órgão emissor</label><input id="lic_orgao" list="dl-orgaos" placeholder="Órgão"></div>
+      <div class="grid2m">
+        <div class="mf"><label>Data solicitação renovação</label><input type="date" id="lic_data_sol"></div>
+        <div class="mf"><label>Válida até</label><input type="date" id="lic_valida"></div>
+      </div>
+      <div class="mf"><label>Observações</label><textarea id="lic_obs" placeholder="Notas, protocolos, pendências…"></textarea></div>
+      <datalist id="dl-tipos"></datalist>
+      <datalist id="dl-orgaos"></datalist>
+    </div>
+    <div class="ma">
+      <button type="button" class="btn-ma ghost" onclick="closeLicModal()">Cancelar</button>
+      <button type="button" class="btn-ma gold" id="btn-lic-save" onclick="saveLicenca()">Salvar</button>
     </div>
   </div>
 </div>
@@ -901,7 +998,10 @@ function renderFilters(){
           <option value="90" ${filters.venc==='90'?'selected':''}>31–90 dias</option>
           <option value="ok" ${filters.venc==='ok'?'selected':''}>Acima de 90 dias / sem prazo</option>
         </select>
-      </div>`;
+      </div>
+      <button type="button" class="btn-ma gold" style="margin-top:14px" onclick="openLicModal(null)">+ Nova licença</button>
+      <button type="button" class="btn-ma ghost" style="margin-top:14px" onclick="refreshLicencasAndRender()">↻ Atualizar</button>
+      <span class="sync-chip" id="lic-sync-chip"></span>`;
     ['fl-status','fl-venc'].forEach(id=>{
       const el = document.getElementById(id);
       if(!el) return;
@@ -1247,23 +1347,141 @@ function renderLicencas(){
     return da-db;
   });
   document.querySelector('#tbl-licencas thead').innerHTML = `<tr>
-    <th>Localidade</th><th>Tipo</th><th>Nº</th><th>Órgão</th><th>Válida até</th><th>Prazo</th><th>Status</th><th>Obs.</th></tr>`;
+    <th>Localidade</th><th>Tipo</th><th>Nº</th><th>Órgão</th><th>Válida até</th><th>Prazo</th><th>Status</th><th>Obs.</th><th></th></tr>`;
   document.querySelector('#tbl-licencas tbody').innerHTML = sorted.map(r=>{
     const x = daysUntil(r['Válida até']);
     let rowClass = '';
     if(r.Status==='Inativa' || (x!==null&&x<0)) rowClass='row-crit';
     else if(x!==null&&x<=30) rowClass='row-urgent';
     const st = r.Status==='Ativa'?'ok':r.Status==='Em andamento'?'w90':r.Status==='Inativa'?'late':'off';
+    const idAttr = r.id ? esc(r.id) : '';
     return `<tr class="${rowClass}">
       <td>${esc(r.Localidade)}</td><td>${esc(r['Tipo de Licença'])}</td><td>${esc(r['Nº'])}</td>
       <td>${esc(r['Órgão Emissor'])}</td><td>${esc(fmtDateBR(r['Válida até']))}</td>
       <td>${vencBadge(r['Válida até'])}</td>
       <td><span class="badge ${st}">${esc(r.Status||'—')}</span></td>
-      <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(r.Observações||'')}">${esc(r.Observações||'')}</td>
+      <td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${esc(r.Observações||'')}">${esc(r.Observações||'')}</td>
+      <td class="tbl-actions">
+        <button type="button" data-lic-ed="${idAttr}">Editar</button>
+        <button type="button" class="del" data-lic-del="${idAttr}">Excluir</button>
+      </td>
     </tr>`;
-  }).join('')||'<tr><td colspan="8" class="empty-state">Sem licenças no filtro</td></tr>';
+  }).join('')||'<tr><td colspan="9" class="empty-state">Sem licenças no filtro</td></tr>';
+  document.querySelectorAll('#tbl-licencas [data-lic-ed]').forEach(btn=>{
+    btn.onclick = ()=>{
+      const id = btn.getAttribute('data-lic-ed');
+      const row = DATA.docs.find(d => d.id === id);
+      openLicModal(row || null);
+    };
+  });
+  document.querySelectorAll('#tbl-licencas [data-lic-del]').forEach(btn=>{
+    btn.onclick = ()=>{
+      const id = btn.getAttribute('data-lic-del');
+      if(id) deleteLicenca(id);
+    };
+  });
 }
 
+
+
+/* ---- CRUD Licenças ---- */
+function emptyToNull(v){
+  if(v == null) return null;
+  const s = String(v).trim();
+  return s === '' ? null : s;
+}
+function rowToPayload(form){
+  return {
+    cnpj: emptyToNull(form.cnpj),
+    localidade: emptyToNull(form.localidade),
+    endereco: emptyToNull(form.endereco),
+    tipo: (form.tipo || '').trim() || '',
+    numero: emptyToNull(form.numero),
+    orgao: emptyToNull(form.orgao),
+    data_solicitacao: emptyToNull(form.data_solicitacao),
+    valida_ate: emptyToNull(form.valida_ate),
+    status: form.status || 'Ativa',
+    observacoes: emptyToNull(form.observacoes)
+  };
+}
+function fillLicDatalists(){
+  const tipos = [...new Set(DATA.docs.map(d => d['Tipo de Licença']).filter(Boolean))].sort();
+  const orgs = [...new Set(DATA.docs.map(d => d['Órgão Emissor']).filter(Boolean))].sort();
+  const dt = document.getElementById('dl-tipos');
+  const do_ = document.getElementById('dl-orgaos');
+  if(dt) dt.innerHTML = tipos.map(t => `<option value="${esc(t)}">`).join('');
+  if(do_) do_.innerHTML = orgs.map(t => `<option value="${esc(t)}">`).join('');
+}
+function openLicModal(row){
+  if(!sb){ alert('Supabase não conectado.'); return; }
+  fillLicDatalists();
+  const title = document.getElementById('modal-lic-title');
+  document.getElementById('lic_id').value = row && row.id ? row.id : '';
+  document.getElementById('lic_cnpj').value = row ? (row.CNPJ || '') : '';
+  document.getElementById('lic_localidade').value = row ? (row.Localidade || '') : '';
+  document.getElementById('lic_endereco').value = row ? (row.Endereço || '') : '';
+  document.getElementById('lic_tipo').value = row ? (row['Tipo de Licença'] || '') : '';
+  document.getElementById('lic_numero').value = row ? (row['Nº'] || '') : '';
+  document.getElementById('lic_orgao').value = row ? (row['Órgão Emissor'] || '') : '';
+  document.getElementById('lic_data_sol').value = (row && row['Data Solicitação Renovação']) ? String(row['Data Solicitação Renovação']).slice(0,10) : '';
+  document.getElementById('lic_valida').value = (row && row['Válida até']) ? String(row['Válida até']).slice(0,10) : '';
+  document.getElementById('lic_status').value = (row && row.Status) ? row.Status : 'Ativa';
+  document.getElementById('lic_obs').value = row ? (row.Observações || '') : '';
+  if(title) title.textContent = row && row.id ? 'Editar licença' : 'Nova licença';
+  document.getElementById('modal-lic').classList.add('on');
+}
+function closeLicModal(){
+  document.getElementById('modal-lic').classList.remove('on');
+}
+async function saveLicenca(){
+  if(!sb){ alert('Supabase não conectado.'); return; }
+  const id = document.getElementById('lic_id').value || null;
+  const tipo = (document.getElementById('lic_tipo').value || '').trim();
+  if(!tipo){ alert('Informe o tipo de licença.'); return; }
+  const payload = rowToPayload({
+    cnpj: document.getElementById('lic_cnpj').value,
+    localidade: document.getElementById('lic_localidade').value,
+    endereco: document.getElementById('lic_endereco').value,
+    tipo,
+    numero: document.getElementById('lic_numero').value,
+    orgao: document.getElementById('lic_orgao').value,
+    data_solicitacao: document.getElementById('lic_data_sol').value,
+    valida_ate: document.getElementById('lic_valida').value,
+    status: document.getElementById('lic_status').value,
+    observacoes: document.getElementById('lic_obs').value
+  });
+  const btn = document.getElementById('btn-lic-save');
+  if(btn){ btn.disabled = true; btn.textContent = 'Salvando…'; }
+  try{
+    let error;
+    if(id){
+      ({ error } = await sb.from('licencas').update(payload).eq('id', id));
+    } else {
+      ({ error } = await sb.from('licencas').insert(payload));
+    }
+    if(error) throw error;
+    closeLicModal();
+    await refreshLicencasAndRender();
+  }catch(e){
+    console.error(e);
+    alert('Erro ao salvar: ' + (e.message || e));
+  }finally{
+    if(btn){ btn.disabled = false; btn.textContent = 'Salvar'; }
+  }
+}
+async function deleteLicenca(id){
+  if(!id){ alert('Registro sem ID do banco (recarregue a página após o login).'); return; }
+  if(!confirm('Excluir esta licença definitivamente?')) return;
+  if(!sb){ alert('Supabase não conectado.'); return; }
+  try{
+    const { error } = await sb.from('licencas').delete().eq('id', id);
+    if(error) throw error;
+    await refreshLicencasAndRender();
+  }catch(e){
+    console.error(e);
+    alert('Erro ao excluir: ' + (e.message || e));
+  }
+}
 
 /* ---- Supabase: Licenças ---- */
 function mapLicencaRow(row){
@@ -1302,9 +1520,19 @@ async function loadLicencasFromCloud(){
 }
 
 async function refreshLicencasAndRender(){
+  const chip = document.getElementById('lic-sync-chip');
+  if(chip) chip.textContent = 'Sincronizando…';
   const res = await loadLicencasFromCloud();
   if(selectedModule === 'licencas' && screen === 'data'){
-    try{ renderLicencas(); }catch(err){ console.warn(err); }
+    try{
+      renderFilters();
+      renderLicencas();
+    }catch(err){ console.warn(err); }
+  }
+  if(chip){
+    chip.textContent = res && res.ok
+      ? (res.count + ' registros · Supabase')
+      : ('Offline / embutido' + (res && res.error ? ' · ' + res.error : ''));
   }
   return res;
 }
@@ -1412,6 +1640,10 @@ document.getElementById('btn-ham').onclick = ()=>{
 document.getElementById('scrim').onclick = ()=>toggleSide(false);
 buildSideUnits();
 wireLogin();
+document.getElementById('modal-lic')?.addEventListener('click', e=>{
+  if(e.target && e.target.id === 'modal-lic') closeLicModal();
+});
+
 restoreSession().then(ok=>{
   if(!ok) updateChrome();
 });
