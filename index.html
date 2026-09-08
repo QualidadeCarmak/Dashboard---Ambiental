@@ -369,6 +369,13 @@ table.data tr.row-urgent td{background:rgba(192,86,33,.04)}
 
 body.on-guia .btn-ham{visibility:hidden; pointer-events:none; opacity:0}
 body.on-guia .side, body.on-guia .scrim{display:none!important}
+/* Guia: some o bloco .main (evita faixa em branco abaixo dos cards) */
+body.on-guia .main{display:none!important}
+.guia{
+  margin-top:56px;
+  min-height:calc(100vh - 56px);
+  box-sizing:border-box;
+}
 
 /* Dual bar chart */
 .dual-bars{display:flex; flex-direction:column; gap:10px}
