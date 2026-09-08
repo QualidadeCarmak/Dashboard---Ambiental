@@ -675,6 +675,126 @@ body.on-guia .side, body.on-guia .scrim{display:none!important}
 </div>
 
 
+
+<!-- Modal Resíduos -->
+<div class="modal-bg" id="modal-res" role="dialog" aria-modal="true">
+  <div class="modal-box" style="max-width:640px">
+    <div class="mh"><span id="modal-res-title">Novo resíduo</span>
+      <button type="button" onclick="closeResModal()" aria-label="Fechar">×</button></div>
+    <div class="mb">
+      <input type="hidden" id="res_id">
+      <div class="grid2m">
+        <div class="mf"><label>Unidade *</label><input id="res_unidade" list="dl-unidades" required></div>
+        <div class="mf"><label>Mês</label>
+          <select id="res_mes"><option value="">—</option>
+            <option>Janeiro</option><option>Fevereiro</option><option>Março</option><option>Abril</option>
+            <option>Maio</option><option>Junho</option><option>Julho</option><option>Agosto</option>
+            <option>Setembro</option><option>Outubro</option><option>Novembro</option><option>Dezembro</option>
+          </select>
+        </div>
+      </div>
+      <div class="grid2m">
+        <div class="mf"><label>Data</label><input type="date" id="res_data"></div>
+        <div class="mf"><label>Ano</label><input type="number" id="res_ano" min="2020" max="2100"></div>
+      </div>
+      <div class="grid2m">
+        <div class="mf"><label>MTR</label><input id="res_mtr"></div>
+        <div class="mf"><label>CDF</label><input id="res_cdf"></div>
+      </div>
+      <div class="mf"><label>Código resíduo</label><input id="res_codigo"></div>
+      <div class="mf"><label>Resíduo *</label><input id="res_residuo" list="dl-residuos-nomes" required></div>
+      <div class="grid2m">
+        <div class="mf"><label>Peso (ton)</label><input type="number" step="0.0001" id="res_peso"></div>
+        <div class="mf"><label>Tecnologia</label><input id="res_tec" list="dl-tecnologias"></div>
+      </div>
+      <div class="mf"><label>Transportador</label><input id="res_transp" list="dl-empresas"></div>
+      <div class="grid2m">
+        <div class="mf"><label>Custo transportador (R$)</label><input type="number" step="0.01" id="res_custo_t"></div>
+        <div class="mf"><label>Custo destinatário (R$)</label><input type="number" step="0.01" id="res_custo_d"></div>
+      </div>
+      <div class="mf"><label>Destinatário</label><input id="res_dest" list="dl-empresas"></div>
+      <div class="mf"><label>Total (R$)</label><input type="number" step="0.01" id="res_total" placeholder="Soma automática se vazio"></div>
+    </div>
+    <div class="ma">
+      <button type="button" class="btn-ma ghost" onclick="closeResModal()">Cancelar</button>
+      <button type="button" class="btn-ma gold" id="btn-res-save" onclick="saveResiduo()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Receitas -->
+<div class="modal-bg" id="modal-rec" role="dialog" aria-modal="true">
+  <div class="modal-box">
+    <div class="mh"><span id="modal-rec-title">Nova receita</span>
+      <button type="button" onclick="closeRecModal()" aria-label="Fechar">×</button></div>
+    <div class="mb">
+      <input type="hidden" id="rec_id">
+      <div class="grid2m">
+        <div class="mf"><label>Unidade *</label><input id="rec_unidade" list="dl-unidades" required></div>
+        <div class="mf"><label>Mês</label>
+          <select id="rec_mes"><option value="">—</option>
+            <option>Janeiro</option><option>Fevereiro</option><option>Março</option><option>Abril</option>
+            <option>Maio</option><option>Junho</option><option>Julho</option><option>Agosto</option>
+            <option>Setembro</option><option>Outubro</option><option>Novembro</option><option>Dezembro</option>
+          </select>
+        </div>
+      </div>
+      <div class="grid2m">
+        <div class="mf"><label>Data</label><input type="date" id="rec_data"></div>
+        <div class="mf"><label>Ano</label><input type="number" id="rec_ano" min="2020" max="2100"></div>
+      </div>
+      <div class="mf"><label>MTR</label><input id="rec_mtr"></div>
+      <div class="mf"><label>Código resíduo</label><input id="rec_codigo"></div>
+      <div class="mf"><label>Resíduo *</label><input id="rec_residuo" list="dl-residuos-nomes" required></div>
+      <div class="grid2m">
+        <div class="mf"><label>Peso (ton)</label><input type="number" step="0.0001" id="rec_peso"></div>
+        <div class="mf"><label>Receita (R$) *</label><input type="number" step="0.01" id="rec_receita" required></div>
+      </div>
+      <div class="mf"><label>Destinador</label><input id="rec_destinador" list="dl-empresas"></div>
+    </div>
+    <div class="ma">
+      <button type="button" class="btn-ma ghost" onclick="closeRecModal()">Cancelar</button>
+      <button type="button" class="btn-ma gold" id="btn-rec-save" onclick="saveReceita()">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Efluentes -->
+<div class="modal-bg" id="modal-ef" role="dialog" aria-modal="true">
+  <div class="modal-box">
+    <div class="mh"><span id="modal-ef-title">Nova medição</span>
+      <button type="button" onclick="closeEfModal()" aria-label="Fechar">×</button></div>
+    <div class="mb">
+      <input type="hidden" id="ef_id">
+      <div class="grid2m">
+        <div class="mf"><label>Unidade *</label><input id="ef_unidade" list="dl-unidades" required></div>
+        <div class="mf"><label>Sistema</label><input id="ef_sistema" list="dl-sistemas" placeholder="CSAO / Fossa e Filtro…"></div>
+      </div>
+      <div class="mf"><label>Parâmetro *</label><input id="ef_param" list="dl-params" required></div>
+      <div class="grid2m">
+        <div class="mf"><label>Operador limite</label>
+          <select id="ef_op"><option value="">—</option><option>&lt;=</option><option>&lt;</option><option>Entre</option><option>&gt;</option><option>&gt;=</option></select>
+        </div>
+        <div class="mf"><label>Limite</label><input id="ef_limite" placeholder="ex.: 120 ou 5,0 a 9,0"></div>
+      </div>
+      <div class="grid2m">
+        <div class="mf"><label>Ano</label><input type="number" id="ef_ano" min="2020" max="2100"></div>
+        <div class="mf"><label>Valor *</label><input type="number" step="0.0001" id="ef_valor" required></div>
+      </div>
+    </div>
+    <div class="ma">
+      <button type="button" class="btn-ma ghost" onclick="closeEfModal()">Cancelar</button>
+      <button type="button" class="btn-ma gold" id="btn-ef-save" onclick="saveEfluente()">Salvar</button>
+    </div>
+  </div>
+</div>
+<datalist id="dl-unidades"></datalist>
+<datalist id="dl-residuos-nomes"></datalist>
+<datalist id="dl-tecnologias"></datalist>
+<datalist id="dl-empresas"></datalist>
+<datalist id="dl-sistemas"></datalist>
+<datalist id="dl-params"></datalist>
+
 <!-- Modal Licenças -->
 <div class="modal-bg" id="modal-lic" role="dialog" aria-modal="true">
   <div class="modal-box">
@@ -931,9 +1051,12 @@ function pickModule(mod){
   renderData();
   toggleSide(false);
   window.scrollTo({top:0,behavior:'smooth'});
-  if(mod === 'licencas'){
-    refreshLicencasAndRender();
+  if(mod === 'licencas') refreshLicencasAndRender();
+  else if(mod === 'residuos'){ loadResiduosFromCloud().then(()=>{ renderFilters(); renderResiduos(); }); }
+  else if(mod === 'financas'){
+    Promise.all([loadResiduosFromCloud(), loadReceitasFromCloud()]).then(()=>{ renderFilters(); renderFinancas(); });
   }
+  else if(mod === 'efluentes'){ loadEfluentesFromCloud().then(()=>{ renderFilters(); renderEfluentes(); }); }
 }
 function pickUnit(unit){
   selectedUnit = unit || '';
@@ -972,13 +1095,20 @@ function renderFilters(){
     return h;
   };
   if(selectedModule==='residuos'){
-    document.getElementById('filt-residuos').innerHTML = commonAnoMes('fr');
+    document.getElementById('filt-residuos').innerHTML = commonAnoMes('fr') +
+      `<button type="button" class="btn-ma gold" style="margin-top:14px" onclick="openResModal(null)">+ Novo resíduo</button>
+       <button type="button" class="btn-ma ghost" style="margin-top:14px" onclick="loadResiduosFromCloud().then(()=>{renderFilters();renderResiduos();})">↻ Atualizar</button>`;
     bindFilter('fr-ano','fr-mes');
   } else if(selectedModule==='financas'){
-    document.getElementById('filt-financas').innerHTML = commonAnoMes('ff');
+    document.getElementById('filt-financas').innerHTML = commonAnoMes('ff') +
+      `<button type="button" class="btn-ma gold" style="margin-top:14px" onclick="openRecModal(null)">+ Nova receita</button>
+       <button type="button" class="btn-ma ghost" style="margin-top:14px" onclick="openResModal(null)">+ Novo custo (resíduo)</button>
+       <button type="button" class="btn-ma ghost" style="margin-top:14px" onclick="Promise.all([loadResiduosFromCloud(),loadReceitasFromCloud()]).then(()=>{renderFilters();renderFinancas();})">↻ Atualizar</button>`;
     bindFilter('ff-ano','ff-mes');
   } else if(selectedModule==='efluentes'){
-    document.getElementById('filt-efluentes').innerHTML = commonAnoMes('fe');
+    document.getElementById('filt-efluentes').innerHTML = commonAnoMes('fe') +
+      `<button type="button" class="btn-ma gold" style="margin-top:14px" onclick="openEfModal(null)">+ Nova medição</button>
+       <button type="button" class="btn-ma ghost" style="margin-top:14px" onclick="loadEfluentesFromCloud().then(()=>{renderFilters();renderEfluentes();})">↻ Atualizar</button>`;
     bindFilter('fe-ano','fe-mes');
   } else if(selectedModule==='licencas'){
     document.getElementById('filt-licencas').innerHTML = `
@@ -1132,13 +1262,23 @@ function renderResiduos(){
 
   document.querySelector('#tbl-residuos thead').innerHTML = `<tr>
     <th>Unidade</th><th>Data</th><th>MTR</th><th>Resíduo</th><th>Peso</th><th>Tecnologia</th>
-    <th>Transportador</th><th>Destinatário</th><th>Total</th></tr>`;
+    <th>Transportador</th><th>Destinatário</th><th>Total</th><th></th></tr>`;
   document.querySelector('#tbl-residuos tbody').innerHTML = res.slice(0,500).map(r=>`<tr>
     <td>${esc(r.Unidade)}</td><td>${esc(r.Data||'')}</td><td>${esc(r.MTR||'—')}</td>
     <td title="${esc(r['Código resíduo'])}">${esc(r.Resíduo)}</td>
     <td>${fmtN(r['Peso (ton)'],3)}</td><td>${esc(r.Tecnologia)}</td>
     <td>${esc(r.Transportador||'—')}</td><td>${esc(r.Destinatário)}</td>
-    <td><b>${fmtR(r['Total (R$)'])}</b></td></tr>`).join('')||'<tr><td colspan="9" class="empty-state">Sem registros</td></tr>';
+    <td><b>${fmtR(r['Total (R$)'])}</b></td>
+    <td class="tbl-actions">
+      <button type="button" data-res-ed="${esc(r.id||'')}">Editar</button>
+      <button type="button" class="del" data-res-del="${esc(r.id||'')}">Excluir</button>
+    </td></tr>`).join('')||'<tr><td colspan="10" class="empty-state">Sem registros</td></tr>';
+  document.querySelectorAll('#tbl-residuos [data-res-ed]').forEach(b=>{
+    b.onclick=()=>{ const id=b.getAttribute('data-res-ed'); openResModal(DATA.residuos.find(x=>x.id===id)||null); };
+  });
+  document.querySelectorAll('#tbl-residuos [data-res-del]').forEach(b=>{
+    b.onclick=()=>{ const id=b.getAttribute('data-res-del'); if(id) deleteResiduo(id); };
+  });
 }
 
 /* ---- RENDER FINANÇAS ---- */
@@ -1172,15 +1312,33 @@ function renderFinancas(){
   const unArr = Object.entries(byUn).map(([name,v])=>({name,v:v.r-v.c,label:fmtR(v.r-v.c)})).sort((a,b)=>b.v-a.v);
   document.getElementById('bars-fin-un').innerHTML = barList(unArr, 'v');
 
-  document.querySelector('#tbl-financas thead').innerHTML = `<tr><th>Origem</th><th>Unidade</th><th>Mês</th><th>Resíduo</th><th>Peso</th><th>Valor (R$)</th></tr>`;
+  document.querySelector('#tbl-financas thead').innerHTML = `<tr><th>Origem</th><th>Unidade</th><th>Mês</th><th>Resíduo</th><th>Peso</th><th>Valor (R$)</th><th></th></tr>`;
   const rows = [
-    ...res.map(r=>({o:'Custo',u:r.Unidade,m:r.Mês,res:r.Resíduo,p:r['Peso (ton)'],v:r['Total (R$)']})),
-    ...rec.map(r=>({o:'Receita',u:r.Unidade,m:r.Mês,res:r.Resíduo,p:r['Peso (ton)'],v:r['Receita (R$)']}))
+    ...res.map(r=>({o:'Custo',u:r.Unidade,m:r.Mês,res:r.Resíduo,p:r['Peso (ton)'],v:r['Total (R$)'],id:r.id,src:'res'})),
+    ...rec.map(r=>({o:'Receita',u:r.Unidade,m:r.Mês,res:r.Resíduo,p:r['Peso (ton)'],v:r['Receita (R$)'],id:r.id,src:'rec'}))
   ].slice(0,400);
   document.querySelector('#tbl-financas tbody').innerHTML = rows.map(r=>`<tr>
     <td><span class="badge ${r.o==='Receita'?'ok':'w30'}">${r.o}</span></td>
     <td>${esc(r.u)}</td><td>${esc(r.m)}</td><td>${esc(r.res)}</td>
-    <td>${fmtN(r.p,3)}</td><td><b>${fmtR(r.v)}</b></td></tr>`).join('')||'<tr><td colspan="6" class="empty-state">Sem dados</td></tr>';
+    <td>${fmtN(r.p,3)}</td><td><b>${fmtR(r.v)}</b></td>
+    <td class="tbl-actions">
+      <button type="button" data-fin-ed="${esc(r.id||'')}" data-src="${r.src}">Editar</button>
+      <button type="button" class="del" data-fin-del="${esc(r.id||'')}" data-src="${r.src}">Excluir</button>
+    </td></tr>`).join('')||'<tr><td colspan="7" class="empty-state">Sem dados</td></tr>';
+  document.querySelectorAll('#tbl-financas [data-fin-ed]').forEach(b=>{
+    b.onclick=()=>{
+      const id=b.getAttribute('data-fin-ed'); const src=b.getAttribute('data-src');
+      if(src==='rec') openRecModal(DATA.receitas.find(x=>x.id===id)||null);
+      else openResModal(DATA.residuos.find(x=>x.id===id)||null);
+    };
+  });
+  document.querySelectorAll('#tbl-financas [data-fin-del]').forEach(b=>{
+    b.onclick=()=>{
+      const id=b.getAttribute('data-fin-del'); const src=b.getAttribute('data-src');
+      if(!id) return;
+      if(src==='rec') deleteReceita(id); else deleteResiduo(id);
+    };
+  });
 }
 
 /* ---- RENDER EFLUENTES ---- */
@@ -1225,11 +1383,21 @@ function renderEfluentes(){
   }).join('');
   document.getElementById('ef-params').innerHTML = html || '<div class="empty-state">Sem medições no filtro</div>';
 
-  document.querySelector('#tbl-efluentes thead').innerHTML = `<tr><th>Unidade</th><th>Sistema</th><th>Parâmetro</th><th>Operador</th><th>Limite</th><th>Ano</th><th>Valor</th></tr>`;
+  document.querySelector('#tbl-efluentes thead').innerHTML = `<tr><th>Unidade</th><th>Sistema</th><th>Parâmetro</th><th>Operador</th><th>Limite</th><th>Ano</th><th>Valor</th><th></th></tr>`;
   document.querySelector('#tbl-efluentes tbody').innerHTML = rows.map(r=>`<tr>
     <td>${esc(r.Unidade)}</td><td>${esc(r.Sistema)}</td><td>${esc(r.Parâmetro)}</td>
     <td>${esc(r['Operador Limite'])}</td><td>${esc(r.Limite)}</td><td>${esc(r.Ano)}</td>
-    <td><b>${fmtN(r.Valor,2)}</b></td></tr>`).join('')||'<tr><td colspan="7" class="empty-state">Sem registros</td></tr>';
+    <td><b>${fmtN(r.Valor,2)}</b></td>
+    <td class="tbl-actions">
+      <button type="button" data-ef-ed="${esc(r.id||'')}">Editar</button>
+      <button type="button" class="del" data-ef-del="${esc(r.id||'')}">Excluir</button>
+    </td></tr>`).join('')||'<tr><td colspan="8" class="empty-state">Sem registros</td></tr>';
+  document.querySelectorAll('#tbl-efluentes [data-ef-ed]').forEach(b=>{
+    b.onclick=()=>{ const id=b.getAttribute('data-ef-ed'); openEfModal(DATA.efluentes.find(x=>x.id===id)||null); };
+  });
+  document.querySelectorAll('#tbl-efluentes [data-ef-del]').forEach(b=>{
+    b.onclick=()=>{ const id=b.getAttribute('data-ef-del'); if(id) deleteEfluente(id); };
+  });
 }
 
 /* ---- RENDER LICENÇAS (executive) ---- */
@@ -1483,6 +1651,310 @@ async function deleteLicenca(id){
   }
 }
 
+
+/* ---- Supabase: Resíduos / Receitas / Efluentes ---- */
+function mapResiduoRow(row){
+  return {
+    id: row.id,
+    'Unidade': row.unidade || '',
+    'Mês': row.mes || '',
+    'Data': row.data || '',
+    'Ano': row.ano,
+    'MTR': row.mtr || '',
+    'CDF': row.cdf || '',
+    'Código resíduo': row.codigo_residuo || '',
+    'Resíduo': row.residuo || '',
+    'Peso (ton)': row.peso_ton != null ? Number(row.peso_ton) : 0,
+    'Transportador': row.transportador || '',
+    'Custo Transportador (R$)': row.custo_transportador != null ? Number(row.custo_transportador) : 0,
+    'Destinatário': row.destinatario || '',
+    'Custo Destinatário (R$)': row.custo_destinatario != null ? Number(row.custo_destinatario) : 0,
+    'Tecnologia': row.tecnologia || '',
+    'Total (R$)': row.total_r != null ? Number(row.total_r) : 0
+  };
+}
+function mapReceitaRow(row){
+  return {
+    id: row.id,
+    'Unidade': row.unidade || '',
+    'Mês': row.mes || '',
+    'Data': row.data || '',
+    'Ano': row.ano,
+    'MTR': row.mtr || '',
+    'Código resíduo': row.codigo_residuo || '',
+    'Resíduo': row.residuo || '',
+    'Peso (ton)': row.peso_ton != null ? Number(row.peso_ton) : 0,
+    'Destinador': row.destinador || '',
+    'Receita (R$)': row.receita_r != null ? Number(row.receita_r) : 0
+  };
+}
+function mapEfluenteRow(row){
+  return {
+    id: row.id,
+    'Unidade': row.unidade || '',
+    'Sistema': row.sistema || '',
+    'Parâmetro': row.parametro || '',
+    'Operador Limite': row.operador_limite || '',
+    'Limite': row.limite || '',
+    'Ano': row.ano,
+    'Valor': row.valor != null ? Number(row.valor) : 0
+  };
+}
+
+async function loadResiduosFromCloud(){
+  if(!sb) return {ok:false,error:'Sem cliente'};
+  try{
+    const { data, error } = await sb.from('residuos').select('*').order('data',{ascending:false});
+    if(error) throw error;
+    DATA.residuos.length = 0;
+    (data||[]).map(mapResiduoRow).forEach(r => DATA.residuos.push(r));
+    return {ok:true, count: DATA.residuos.length};
+  }catch(e){ console.warn(e); return {ok:false, error:e.message||String(e)}; }
+}
+async function loadReceitasFromCloud(){
+  if(!sb) return {ok:false,error:'Sem cliente'};
+  try{
+    const { data, error } = await sb.from('receitas').select('*').order('data',{ascending:false});
+    if(error) throw error;
+    DATA.receitas.length = 0;
+    (data||[]).map(mapReceitaRow).forEach(r => DATA.receitas.push(r));
+    return {ok:true, count: DATA.receitas.length};
+  }catch(e){ console.warn(e); return {ok:false, error:e.message||String(e)}; }
+}
+async function loadEfluentesFromCloud(){
+  if(!sb) return {ok:false,error:'Sem cliente'};
+  try{
+    const { data, error } = await sb.from('efluentes').select('*').order('ano',{ascending:false});
+    if(error) throw error;
+    DATA.efluentes.length = 0;
+    (data||[]).map(mapEfluenteRow).forEach(r => DATA.efluentes.push(r));
+    return {ok:true, count: DATA.efluentes.length};
+  }catch(e){ console.warn(e); return {ok:false, error:e.message||String(e)}; }
+}
+
+async function loadAllModulesFromCloud(){
+  const [a,b,c,d] = await Promise.all([
+    loadLicencasFromCloud(),
+    loadResiduosFromCloud(),
+    loadReceitasFromCloud(),
+    loadEfluentesFromCloud()
+  ]);
+  console.info('[MA] Sync cloud', {licencas:a, residuos:b, receitas:c, efluentes:d});
+  return {licencas:a, residuos:b, receitas:c, efluentes:d};
+}
+
+function fillSharedDatalists(){
+  const units = [...new Set([
+    ...DATA.residuos.map(r=>r.Unidade),
+    ...DATA.receitas.map(r=>r.Unidade),
+    ...DATA.efluentes.map(r=>r.Unidade),
+    ...UNIT_META.map(u=>u.u)
+  ].filter(Boolean))].sort((a,b)=>a.localeCompare(b,'pt-BR'));
+  const nomes = [...new Set([
+    ...DATA.residuos.map(r=>r.Resíduo),
+    ...DATA.receitas.map(r=>r.Resíduo)
+  ].filter(Boolean))].sort((a,b)=>a.localeCompare(b,'pt-BR'));
+  const tecs = [...new Set(DATA.residuos.map(r=>r.Tecnologia).filter(Boolean))].sort();
+  const empr = [...new Set([
+    ...DATA.residuos.map(r=>r.Transportador),
+    ...DATA.residuos.map(r=>r.Destinatário),
+    ...DATA.receitas.map(r=>r.Destinador)
+  ].filter(Boolean))].sort();
+  const sis = [...new Set(DATA.efluentes.map(r=>r.Sistema).filter(Boolean))].sort();
+  const params = [...new Set(DATA.efluentes.map(r=>r.Parâmetro).filter(Boolean))].sort();
+  const setDL = (id, arr)=>{ const el=document.getElementById(id); if(el) el.innerHTML = arr.map(x=>`<option value="${esc(x)}">`).join(''); };
+  setDL('dl-unidades', units);
+  setDL('dl-residuos-nomes', nomes);
+  setDL('dl-tecnologias', tecs);
+  setDL('dl-empresas', empr);
+  setDL('dl-sistemas', sis);
+  setDL('dl-params', params);
+}
+
+function nOr0(v){ const n=parseFloat(v); return isNaN(n)?0:n; }
+function nOrNull(v){ if(v===''||v==null) return null; const n=parseFloat(v); return isNaN(n)?null:n; }
+function iOrNull(v){ if(v===''||v==null) return null; const n=parseInt(v,10); return isNaN(n)?null:n; }
+
+/* Resíduos CRUD */
+function openResModal(row){
+  if(!sb){ alert('Supabase não conectado.'); return; }
+  fillSharedDatalists();
+  document.getElementById('res_id').value = row&&row.id?row.id:'';
+  document.getElementById('res_unidade').value = row?row.Unidade||'':'';
+  document.getElementById('res_mes').value = row?row.Mês||'':'';
+  document.getElementById('res_data').value = row&&row.Data?String(row.Data).slice(0,10):'';
+  document.getElementById('res_ano').value = row&&row.Ano!=null?row.Ano:'';
+  document.getElementById('res_mtr').value = row?row.MTR||'':'';
+  document.getElementById('res_cdf').value = row?String(row.CDF??''):'';
+  document.getElementById('res_codigo').value = row?row['Código resíduo']||'':'';
+  document.getElementById('res_residuo').value = row?row.Resíduo||'':'';
+  document.getElementById('res_peso').value = row&&row['Peso (ton)']!=null?row['Peso (ton)']:'';
+  document.getElementById('res_tec').value = row?row.Tecnologia||'':'';
+  document.getElementById('res_transp').value = row?row.Transportador||'':'';
+  document.getElementById('res_custo_t').value = row&&row['Custo Transportador (R$)']!=null?row['Custo Transportador (R$)']:'';
+  document.getElementById('res_custo_d').value = row&&row['Custo Destinatário (R$)']!=null?row['Custo Destinatário (R$)']:'';
+  document.getElementById('res_dest').value = row?row.Destinatário||'':'';
+  document.getElementById('res_total').value = row&&row['Total (R$)']!=null?row['Total (R$)']:'';
+  document.getElementById('modal-res-title').textContent = row&&row.id?'Editar resíduo':'Novo resíduo';
+  document.getElementById('modal-res').classList.add('on');
+}
+function closeResModal(){ document.getElementById('modal-res').classList.remove('on'); }
+async function saveResiduo(){
+  if(!sb) return;
+  const unidade=(document.getElementById('res_unidade').value||'').trim();
+  const residuo=(document.getElementById('res_residuo').value||'').trim();
+  if(!unidade||!residuo){ alert('Unidade e Resíduo são obrigatórios.'); return; }
+  const ct=nOr0(document.getElementById('res_custo_t').value);
+  const cd=nOr0(document.getElementById('res_custo_d').value);
+  let total=document.getElementById('res_total').value;
+  total = total==='' ? ct+cd : nOr0(total);
+  const payload={
+    unidade, mes:emptyToNull(document.getElementById('res_mes').value),
+    data:emptyToNull(document.getElementById('res_data').value),
+    ano:iOrNull(document.getElementById('res_ano').value),
+    mtr:emptyToNull(document.getElementById('res_mtr').value),
+    cdf:emptyToNull(document.getElementById('res_cdf').value),
+    codigo_residuo:emptyToNull(document.getElementById('res_codigo').value),
+    residuo, peso_ton:nOr0(document.getElementById('res_peso').value),
+    transportador:emptyToNull(document.getElementById('res_transp').value),
+    custo_transportador:ct, destinatario:emptyToNull(document.getElementById('res_dest').value),
+    custo_destinatario:cd, tecnologia:emptyToNull(document.getElementById('res_tec').value),
+    total_r:total
+  };
+  const id=document.getElementById('res_id').value||null;
+  const btn=document.getElementById('btn-res-save');
+  if(btn){btn.disabled=true;btn.textContent='Salvando…';}
+  try{
+    const { error } = id
+      ? await sb.from('residuos').update(payload).eq('id',id)
+      : await sb.from('residuos').insert(payload);
+    if(error) throw error;
+    closeResModal();
+    await loadResiduosFromCloud();
+    if(selectedModule==='residuos'||selectedModule==='financas'){ renderFilters(); renderData(); }
+  }catch(e){ alert('Erro: '+(e.message||e)); }
+  finally{ if(btn){btn.disabled=false;btn.textContent='Salvar';} }
+}
+async function deleteResiduo(id){
+  if(!id||!confirm('Excluir este registro de resíduo?')) return;
+  try{
+    const { error } = await sb.from('residuos').delete().eq('id',id);
+    if(error) throw error;
+    await loadResiduosFromCloud();
+    if(selectedModule==='residuos'||selectedModule==='financas'){ renderFilters(); renderData(); }
+  }catch(e){ alert('Erro: '+(e.message||e)); }
+}
+
+/* Receitas CRUD */
+function openRecModal(row){
+  if(!sb){ alert('Supabase não conectado.'); return; }
+  fillSharedDatalists();
+  document.getElementById('rec_id').value = row&&row.id?row.id:'';
+  document.getElementById('rec_unidade').value = row?row.Unidade||'':'';
+  document.getElementById('rec_mes').value = row?row.Mês||'':'';
+  document.getElementById('rec_data').value = row&&row.Data?String(row.Data).slice(0,10):'';
+  document.getElementById('rec_ano').value = row&&row.Ano!=null?row.Ano:'';
+  document.getElementById('rec_mtr').value = row?row.MTR||'':'';
+  document.getElementById('rec_codigo').value = row?row['Código resíduo']||'':'';
+  document.getElementById('rec_residuo').value = row?row.Resíduo||'':'';
+  document.getElementById('rec_peso').value = row&&row['Peso (ton)']!=null?row['Peso (ton)']:'';
+  document.getElementById('rec_receita').value = row&&row['Receita (R$)']!=null?row['Receita (R$)']:'';
+  document.getElementById('rec_destinador').value = row?row.Destinador||'':'';
+  document.getElementById('modal-rec-title').textContent = row&&row.id?'Editar receita':'Nova receita';
+  document.getElementById('modal-rec').classList.add('on');
+}
+function closeRecModal(){ document.getElementById('modal-rec').classList.remove('on'); }
+async function saveReceita(){
+  if(!sb) return;
+  const unidade=(document.getElementById('rec_unidade').value||'').trim();
+  const residuo=(document.getElementById('rec_residuo').value||'').trim();
+  if(!unidade||!residuo){ alert('Unidade e Resíduo são obrigatórios.'); return; }
+  const payload={
+    unidade, mes:emptyToNull(document.getElementById('rec_mes').value),
+    data:emptyToNull(document.getElementById('rec_data').value),
+    ano:iOrNull(document.getElementById('rec_ano').value),
+    mtr:emptyToNull(document.getElementById('rec_mtr').value),
+    codigo_residuo:emptyToNull(document.getElementById('rec_codigo').value),
+    residuo, peso_ton:nOr0(document.getElementById('rec_peso').value),
+    destinador:emptyToNull(document.getElementById('rec_destinador').value),
+    receita_r:nOr0(document.getElementById('rec_receita').value)
+  };
+  const id=document.getElementById('rec_id').value||null;
+  const btn=document.getElementById('btn-rec-save');
+  if(btn){btn.disabled=true;btn.textContent='Salvando…';}
+  try{
+    const { error } = id
+      ? await sb.from('receitas').update(payload).eq('id',id)
+      : await sb.from('receitas').insert(payload);
+    if(error) throw error;
+    closeRecModal();
+    await loadReceitasFromCloud();
+    if(selectedModule==='financas'){ renderFilters(); renderData(); }
+  }catch(e){ alert('Erro: '+(e.message||e)); }
+  finally{ if(btn){btn.disabled=false;btn.textContent='Salvar';} }
+}
+async function deleteReceita(id){
+  if(!id||!confirm('Excluir esta receita?')) return;
+  try{
+    const { error } = await sb.from('receitas').delete().eq('id',id);
+    if(error) throw error;
+    await loadReceitasFromCloud();
+    if(selectedModule==='financas'){ renderFilters(); renderData(); }
+  }catch(e){ alert('Erro: '+(e.message||e)); }
+}
+
+/* Efluentes CRUD */
+function openEfModal(row){
+  if(!sb){ alert('Supabase não conectado.'); return; }
+  fillSharedDatalists();
+  document.getElementById('ef_id').value = row&&row.id?row.id:'';
+  document.getElementById('ef_unidade').value = row?row.Unidade||'':'';
+  document.getElementById('ef_sistema').value = row?row.Sistema||'':'';
+  document.getElementById('ef_param').value = row?row.Parâmetro||'':'';
+  document.getElementById('ef_op').value = row?row['Operador Limite']||'':'';
+  document.getElementById('ef_limite').value = row?row.Limite||'':'';
+  document.getElementById('ef_ano').value = row&&row.Ano!=null?row.Ano:'';
+  document.getElementById('ef_valor').value = row&&row.Valor!=null?row.Valor:'';
+  document.getElementById('modal-ef-title').textContent = row&&row.id?'Editar medição':'Nova medição';
+  document.getElementById('modal-ef').classList.add('on');
+}
+function closeEfModal(){ document.getElementById('modal-ef').classList.remove('on'); }
+async function saveEfluente(){
+  if(!sb) return;
+  const unidade=(document.getElementById('ef_unidade').value||'').trim();
+  const parametro=(document.getElementById('ef_param').value||'').trim();
+  if(!unidade||!parametro){ alert('Unidade e Parâmetro são obrigatórios.'); return; }
+  const payload={
+    unidade, sistema:emptyToNull(document.getElementById('ef_sistema').value),
+    parametro, operador_limite:emptyToNull(document.getElementById('ef_op').value),
+    limite:emptyToNull(document.getElementById('ef_limite').value),
+    ano:iOrNull(document.getElementById('ef_ano').value),
+    valor:nOrNull(document.getElementById('ef_valor').value)
+  };
+  const id=document.getElementById('ef_id').value||null;
+  const btn=document.getElementById('btn-ef-save');
+  if(btn){btn.disabled=true;btn.textContent='Salvando…';}
+  try{
+    const { error } = id
+      ? await sb.from('efluentes').update(payload).eq('id',id)
+      : await sb.from('efluentes').insert(payload);
+    if(error) throw error;
+    closeEfModal();
+    await loadEfluentesFromCloud();
+    if(selectedModule==='efluentes'){ renderFilters(); renderData(); }
+  }catch(e){ alert('Erro: '+(e.message||e)); }
+  finally{ if(btn){btn.disabled=false;btn.textContent='Salvar';} }
+}
+async function deleteEfluente(id){
+  if(!id||!confirm('Excluir esta medição?')) return;
+  try{
+    const { error } = await sb.from('efluentes').delete().eq('id',id);
+    if(error) throw error;
+    await loadEfluentesFromCloud();
+    if(selectedModule==='efluentes'){ renderFilters(); renderData(); }
+  }catch(e){ alert('Erro: '+(e.message||e)); }
+}
+
 /* ---- Supabase: Licenças ---- */
 function mapLicencaRow(row){
   return {
@@ -1552,13 +2024,8 @@ function showAppAfterLogin(){
   document.getElementById('view-guia').classList.add('on');
   document.body.classList.add('on-guia');
   updateChrome();
-  // Carrega licenças do Supabase (substitui o embutido quando ok)
-  loadLicencasFromCloud().then(res=>{
-    if(res && res.ok){
-      console.info('[MA] Base de licenças sincronizada:', res.count);
-    } else if(res && res.error){
-      console.warn('[MA] Usando dados embutidos de licenças. Motivo:', res.error);
-    }
+  loadAllModulesFromCloud().then(res=>{
+    console.info('[MA] Sincronização pós-login concluída', res);
   });
 }
 function showLoginScreen(){
@@ -1642,6 +2109,15 @@ buildSideUnits();
 wireLogin();
 document.getElementById('modal-lic')?.addEventListener('click', e=>{
   if(e.target && e.target.id === 'modal-lic') closeLicModal();
+});
+['modal-res','modal-rec','modal-ef'].forEach(id=>{
+  document.getElementById(id)?.addEventListener('click', e=>{
+    if(e.target && e.target.id === id){
+      if(id==='modal-res') closeResModal();
+      if(id==='modal-rec') closeRecModal();
+      if(id==='modal-ef') closeEfModal();
+    }
+  });
 });
 
 restoreSession().then(ok=>{
