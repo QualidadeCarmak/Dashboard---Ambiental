@@ -438,6 +438,61 @@ body.on-guia .side, body.on-guia .scrim{display:none!important}
   font-size:11px; color:var(--muted); margin-left:auto; align-self:center;
 }
 
+
+/* Topbar actions */
+.tb-btn{
+  appearance:none; border:1px solid rgba(255,255,255,.22); background:rgba(255,255,255,.1);
+  color:#fff; width:38px; height:38px; border-radius:10px; cursor:pointer;
+  display:inline-flex; align-items:center; justify-content:center; position:relative;
+  font-size:16px; transition:background .15s;
+}
+.tb-btn:hover{background:rgba(255,255,255,.2)}
+.tb-btn .dot{
+  position:absolute; top:6px; right:6px; width:9px; height:9px; border-radius:50%;
+  background:#E8C547; border:2px solid var(--navy); display:none;
+}
+.tb-btn .dot.on{display:block}
+.tb-btn.spin svg{animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.tb-panel{
+  display:none; position:absolute; top:48px; right:0; width:min(360px,92vw);
+  background:var(--card); color:var(--ink); border:1px solid var(--line);
+  border-radius:14px; box-shadow:var(--shadow-lg); z-index:200; overflow:hidden;
+}
+.tb-panel.on{display:block}
+.tb-panel .ph{
+  padding:12px 14px; font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:13px;
+  color:var(--navy); border-bottom:1px solid var(--line); display:flex; justify-content:space-between; align-items:center;
+}
+.tb-panel .pb{max-height:320px; overflow:auto}
+.notif-item{
+  padding:12px 14px; border-bottom:1px solid var(--line); font-size:12.5px; line-height:1.4;
+  cursor:default;
+}
+.notif-item:last-child{border-bottom:none}
+.notif-item .nt{font-weight:700; color:var(--ink); margin-bottom:2px}
+.notif-item .nd{color:var(--muted); font-size:11.5px}
+.notif-item.crit{border-left:3px solid var(--crit)}
+.notif-item.urgent{border-left:3px solid var(--urgent)}
+.notif-item.warn{border-left:3px solid var(--warn)}
+.notif-item.info{border-left:3px solid var(--aqua-2)}
+.tb-wrap{position:relative}
+
+/* Efluentes chart cards */
+.ef-charts{display:grid; grid-template-columns:repeat(2,1fr); gap:14px}
+@media(max-width:900px){.ef-charts{grid-template-columns:1fr}}
+.ef-chart-card{
+  background:var(--card); border:1px solid var(--line); border-radius:16px;
+  padding:16px 16px 12px; box-shadow:var(--shadow);
+}
+.ef-chart-card h4{font-size:13.5px; font-weight:700; color:var(--navy); margin:0 0 2px; font-family:'Space Grotesk',sans-serif}
+.ef-chart-card .sub{font-size:11px; color:var(--muted); margin-bottom:10px}
+.ef-svg-wrap{width:100%; height:160px}
+.ef-legend{display:flex; gap:14px; flex-wrap:wrap; margin-top:8px; font-size:11px; color:var(--muted)}
+.ef-legend span{display:inline-flex; align-items:center; gap:6px}
+.ef-legend i{width:10px; height:10px; border-radius:2px; display:inline-block}
+.ef-legend i.lim{height:0; width:16px; border-top:2px dashed var(--crit); border-radius:0; background:transparent}
+
 @media print{
   .topbar,.side,.scrim,.btn-ham{display:none!important}
   .main{margin:0;padding:12px}
@@ -481,6 +536,41 @@ body.on-guia .side, body.on-guia .scrim{display:none!important}
   <div class="top-right">
     <span class="chip-ctx" id="ctx-chip">Visão consolidada</span>
     <span class="chip-iso">ISO 14001</span>
+    <div class="tb-wrap">
+      <button type="button" class="tb-btn" id="btn-sync" title="Sincronizar com Supabase" onclick="manualSync()" aria-label="Sincronizar">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 0 0-15.5-6.4M3 12a9 9 0 0 0 15.5 6.4"/><polyline points="3 4 3 10 9 10"/><polyline points="21 14 21 20 15 20"/></svg>
+      </button>
+    </div>
+    <div class="tb-wrap">
+      <button type="button" class="tb-btn" id="btn-notif" title="Notificações" onclick="toggleNotifPanel()" aria-label="Notificações">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+        <span class="dot" id="notif-dot"></span>
+      </button>
+      <div class="tb-panel" id="panel-notif">
+        <div class="ph">Notificações <button type="button" class="btn-ma ghost" style="padding:4px 8px;font-size:11px" onclick="toggleNotifPanel(false)">Fechar</button></div>
+        <div class="pb" id="notif-list"></div>
+      </div>
+    </div>
+    <div class="tb-wrap">
+      <button type="button" class="tb-btn" id="btn-cfg" title="Configurações" onclick="toggleCfgPanel()" aria-label="Configurações">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9c.3.6.9 1 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+      </button>
+      <div class="tb-panel" id="panel-cfg">
+        <div class="ph">Configurações <button type="button" class="btn-ma ghost" style="padding:4px 8px;font-size:11px" onclick="toggleCfgPanel(false)">Fechar</button></div>
+        <div class="pb" style="padding:14px">
+          <div style="font-size:12px;color:var(--muted);margin-bottom:10px" id="cfg-user-email">—</div>
+          <div class="mf" style="margin-bottom:10px"><label style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase">Nova senha</label>
+            <input type="password" id="cfg-pass1" placeholder="Mín. 6 caracteres" style="width:100%;padding:9px 11px;border:1px solid var(--line-2);border-radius:8px;margin-top:4px">
+          </div>
+          <div class="mf" style="margin-bottom:12px"><label style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase">Confirmar senha</label>
+            <input type="password" id="cfg-pass2" placeholder="Repita a senha" style="width:100%;padding:9px 11px;border:1px solid var(--line-2);border-radius:8px;margin-top:4px">
+          </div>
+          <div id="cfg-msg" style="font-size:12px;margin-bottom:8px;display:none"></div>
+          <button type="button" class="btn-ma gold" style="width:100%" id="btn-cfg-pass" onclick="changePassword()">Alterar senha</button>
+          <button type="button" class="btn-ma ghost" style="width:100%;margin-top:8px" onclick="doLogout()">Sair da conta</button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -623,8 +713,13 @@ body.on-guia .side, body.on-guia .scrim{display:none!important}
     </div>
     <div class="filters-inline" id="filt-efluentes"></div>
     <div class="kpi-row" id="kpi-efluentes"></div>
+    <div class="panel" style="padding-bottom:8px">
+      <h3>Parâmetros · medições por ano</h3>
+      <p class="panel-sub">Barras = valor medido · linha tracejada = limite da planilha (máx. ou faixa)</p>
+      <div class="ef-charts" id="ef-charts"></div>
+    </div>
     <div class="panel">
-      <h3>Parâmetros vs limite</h3><p class="panel-sub">Valores medidos por parâmetro</p>
+      <h3>Resumo por parâmetro</h3>
       <div id="ef-params"></div>
     </div>
     <div class="panel">
@@ -1342,6 +1437,200 @@ function renderFinancas(){
 }
 
 /* ---- RENDER EFLUENTES ---- */
+
+/* ---- Notificações / Sync / Config ---- */
+function parseLimitBounds(limite, operador){
+  // returns {min, max, label} from planilha (e.g. "6,0 a 9,0", "<=330", "2")
+  const op = String(operador||'').toLowerCase();
+  const raw = String(limite==null?'':limite).trim();
+  if(!raw) return {min:null, max:null, label:''};
+  const norm = raw.replace(',', '.');
+  // range "6.0 a 9.0" / "6,0 a 9,0"
+  const mRange = norm.match(/([\d.]+)\s*(?:a|–|-|até)\s*([\d.]+)/i);
+  if(mRange || op.includes('entre')){
+    if(mRange){
+      const a=parseFloat(mRange[1]), b=parseFloat(mRange[2]);
+      return {min:Math.min(a,b), max:Math.max(a,b), label: raw};
+    }
+  }
+  const n = parseFloat(norm.replace(/[^\d.\-]/g,''));
+  if(isNaN(n)) return {min:null, max:null, label:raw};
+  if(op.includes('>=') || op.includes('≥') || op.includes('min')) return {min:n, max:null, label: '≥ '+n};
+  if(op.includes('>') && !op.includes('=')) return {min:n, max:null, label: '> '+n};
+  // default upper bound
+  return {min:null, max:n, label: (op.includes('<=')||op.includes('≤')?'≤ ':'') + n};
+}
+
+function buildNotifications(){
+  const items = [];
+  // Licenças críticas
+  (DATA.docs||[]).forEach(d=>{
+    const x = daysUntil(d['Válida até']);
+    const loc = d.Localidade || '—';
+    const tipo = d['Tipo de Licença'] || 'Licença';
+    if(d.Status==='Inativa'){
+      items.push({lvl:'crit', title:tipo+' inativa', desc:loc, mod:'licencas'});
+    } else if(x!==null && x<0){
+      items.push({lvl:'crit', title:tipo+' vencida', desc:loc+' · há '+Math.abs(x)+' dias', mod:'licencas'});
+    } else if(x!==null && x<=30){
+      items.push({lvl:'urgent', title:tipo+' vence em '+x+'d', desc:loc, mod:'licencas'});
+    } else if(x!==null && x<=90){
+      items.push({lvl:'warn', title:tipo+' em '+x+' dias', desc:loc, mod:'licencas'});
+    }
+  });
+  // Efluentes fora do limite
+  (DATA.efluentes||[]).forEach(r=>{
+    const b = parseLimitBounds(r.Limite, r['Operador Limite']);
+    const v = +r.Valor;
+    if(isNaN(v)) return;
+    let out=false;
+    if(b.max!=null && v>b.max) out=true;
+    if(b.min!=null && v<b.min) out=true;
+    if(out){
+      items.push({lvl:'urgent', title:(r.Parâmetro||'Parâmetro')+' fora do limite', desc:(r.Unidade||'')+' · '+r.Sistema+' · '+r.Ano+' · valor '+v, mod:'efluentes'});
+    }
+  });
+  // unique-ish
+  const seen=new Set();
+  return items.filter(it=>{
+    const k=it.lvl+it.title+it.desc;
+    if(seen.has(k)) return false;
+    seen.add(k); return true;
+  }).slice(0,40);
+}
+
+function renderNotifications(){
+  const items = buildNotifications();
+  const list = document.getElementById('notif-list');
+  const dot = document.getElementById('notif-dot');
+  if(dot) dot.classList.toggle('on', items.some(i=>i.lvl==='crit'||i.lvl==='urgent'));
+  if(!list) return;
+  if(!items.length){
+    list.innerHTML = '<div class="notif-item info"><div class="nt">Tudo em dia</div><div class="nd">Nenhum alerta crítico no momento</div></div>';
+    return;
+  }
+  list.innerHTML = items.map(it=>`
+    <div class="notif-item ${it.lvl}" onclick="pickModule('${it.mod}');toggleNotifPanel(false)">
+      <div class="nt">${esc(it.title)}</div>
+      <div class="nd">${esc(it.desc)}</div>
+    </div>`).join('');
+}
+
+function toggleNotifPanel(force){
+  const p = document.getElementById('panel-notif');
+  const c = document.getElementById('panel-cfg');
+  if(c) c.classList.remove('on');
+  if(!p) return;
+  const on = force===false ? false : force===true ? true : !p.classList.contains('on');
+  p.classList.toggle('on', on);
+  if(on) renderNotifications();
+}
+function toggleCfgPanel(force){
+  const p = document.getElementById('panel-cfg');
+  const n = document.getElementById('panel-notif');
+  if(n) n.classList.remove('on');
+  if(!p) return;
+  const on = force===false ? false : force===true ? true : !p.classList.contains('on');
+  p.classList.toggle('on', on);
+  if(on){
+    const em = document.getElementById('cfg-user-email');
+    if(em) em.textContent = (currentUser && currentUser.email) ? currentUser.email : 'Usuário autenticado';
+    document.getElementById('cfg-msg').style.display='none';
+  }
+}
+
+async function changePassword(){
+  const p1 = document.getElementById('cfg-pass1').value||'';
+  const p2 = document.getElementById('cfg-pass2').value||'';
+  const msg = document.getElementById('cfg-msg');
+  const show = (t, ok)=>{ msg.style.display='block'; msg.style.color=ok?'var(--ok)':'var(--crit)'; msg.textContent=t; };
+  if(p1.length<6){ show('A senha deve ter no mínimo 6 caracteres'); return; }
+  if(p1!==p2){ show('As senhas não coincidem'); return; }
+  if(!sb){ show('Supabase não conectado'); return; }
+  const btn=document.getElementById('btn-cfg-pass');
+  if(btn){btn.disabled=true;btn.textContent='Salvando…';}
+  try{
+    const { error } = await sb.auth.updateUser({ password: p1 });
+    if(error) throw error;
+    show('Senha alterada com sucesso', true);
+    document.getElementById('cfg-pass1').value='';
+    document.getElementById('cfg-pass2').value='';
+  }catch(e){
+    show('Erro: '+(e.message||e));
+  }finally{
+    if(btn){btn.disabled=false;btn.textContent='Alterar senha';}
+  }
+}
+
+async function manualSync(){
+  const btn = document.getElementById('btn-sync');
+  if(btn) btn.classList.add('spin');
+  try{
+    const res = await loadAllModulesFromCloud();
+    renderNotifications();
+    if(screen==='data') renderData();
+    const ok = res && Object.values(res).every(x=>x && x.ok);
+    console.info('[MA] Sync manual', res);
+    if(!ok) alert('Sincronização parcial. Veja o console para detalhes.');
+  }catch(e){
+    alert('Falha na sincronização: '+(e.message||e));
+  }finally{
+    if(btn) btn.classList.remove('spin');
+  }
+}
+
+function efChartSvg(years, values, bounds, height=150){
+  const w=320, h=height, padL=36, padR=12, padT=18, padB=28;
+  const plotW=w-padL-padR, plotH=h-padT-padB;
+  const nums = values.filter(v=>v!=null && !isNaN(v));
+  let yMax = Math.max(...nums, bounds.max!=null?bounds.max:0, 0);
+  let yMin = Math.min(...nums, bounds.min!=null?bounds.min:0, 0);
+  if(yMax===yMin){ yMax = yMax||1; yMin=0; }
+  // headroom
+  const span = yMax-yMin || 1;
+  yMax = yMax + span*0.15;
+  if(yMin>0) yMin = Math.max(0, yMin - span*0.05);
+  const yScale = v => padT + plotH - ((v-yMin)/(yMax-yMin))*plotH;
+  const n = Math.max(years.length,1);
+  const gap = plotW/(n);
+  const barW = Math.min(36, gap*0.45);
+  let svg = `<svg viewBox="0 0 ${w} ${h}" width="100%" height="${h}" preserveAspectRatio="xMidYMid meet">`;
+  // grid
+  for(let i=0;i<=3;i++){
+    const gy = padT + (plotH*i/3);
+    const gv = yMax - (yMax-yMin)*i/3;
+    svg += `<line x1="${padL}" y1="${gy}" x2="${w-padR}" y2="${gy}" stroke="#E8EEE8" stroke-width="1"/>`;
+    svg += `<text x="${padL-4}" y="${gy+3}" text-anchor="end" font-size="9" fill="#5C6E60">${fmtN(gv, gv>=10?0:1)}</text>`;
+  }
+  // limit max
+  if(bounds.max!=null){
+    const ly = yScale(bounds.max);
+    svg += `<line x1="${padL}" y1="${ly}" x2="${w-padR}" y2="${ly}" stroke="#B91C1C" stroke-width="1.5" stroke-dasharray="5 4"/>`;
+    svg += `<text x="${w-padR}" y="${ly-4}" text-anchor="end" font-size="9" fill="#B91C1C" font-weight="600">Limite ${fmtN(bounds.max, bounds.max>=10?0:1)}</text>`;
+  }
+  if(bounds.min!=null){
+    const ly = yScale(bounds.min);
+    svg += `<line x1="${padL}" y1="${ly}" x2="${w-padR}" y2="${ly}" stroke="#C05621" stroke-width="1.5" stroke-dasharray="5 4"/>`;
+    svg += `<text x="${w-padR}" y="${ly-4}" text-anchor="end" font-size="9" fill="#C05621" font-weight="600">Mín ${fmtN(bounds.min,1)}</text>`;
+  }
+  years.forEach((yr,i)=>{
+    const v = values[i];
+    const cx = padL + gap*i + gap/2;
+    if(v!=null && !isNaN(v)){
+      const y0 = yScale(Math.max(0,yMin));
+      const y1 = yScale(v);
+      const top = Math.min(y0,y1), bh = Math.max(2, Math.abs(y0-y1));
+      const over = (bounds.max!=null && v>bounds.max) || (bounds.min!=null && v<bounds.min);
+      svg += `<rect x="${cx-barW/2}" y="${top}" width="${barW}" height="${bh}" rx="4" fill="${over?'#C05621':'#1A4F36'}"/>`;
+      svg += `<text x="${cx}" y="${top-4}" text-anchor="middle" font-size="10" font-weight="700" fill="#0C1A12">${fmtN(v, v>=10?1:1)}</text>`;
+    }
+    svg += `<text x="${cx}" y="${h-8}" text-anchor="middle" font-size="10" fill="#5C6E60">${esc(String(yr))}</text>`;
+  });
+  svg += '</svg>';
+  return svg;
+}
+
+
 function setEfSystem(sys){
   selectedEfSystem = sys;
   document.querySelectorAll('#ef-tabs .ef-tab').forEach(b=>b.classList.toggle('active', b.dataset.sys===sys));
@@ -1369,16 +1658,46 @@ function renderEfluentes(){
     <div class="kpi ok-edge"><div class="lbl">Dentro do limite</div><div class="val">${ok}</div><div class="sub">leituras ok</div></div>
     <div class="kpi crit-edge"><div class="lbl">Acima do limite</div><div class="val">${fail}</div><div class="sub">requer atenção</div></div>`;
 
+  // Group by parameter -> year averages + limit
   const byP = {};
   rows.forEach(r=>{
     const k = r.Parâmetro||'—';
-    if(!byP[k]) byP[k]={vals:[],lim:r.Limite,op:r['Operador Limite']};
-    byP[k].vals.push(+r.Valor||0);
+    if(!byP[k]) byP[k]={byYear:{}, lim:r.Limite, op:r['Operador Limite'], sys:r.Sistema};
+    const yr = r.Ano!=null ? String(r.Ano) : '—';
+    if(!byP[k].byYear[yr]) byP[k].byYear[yr]=[];
+    byP[k].byYear[yr].push(+r.Valor||0);
   });
+
+  const chartHtml = Object.entries(byP).map(([name,o])=>{
+    const years = Object.keys(o.byYear).sort();
+    const values = years.map(y=>{
+      const arr=o.byYear[y]; return arr.reduce((a,b)=>a+b,0)/arr.length;
+    });
+    const bounds = parseLimitBounds(o.lim, o.op);
+    const limTxt = bounds.label || (o.lim?String(o.lim):'—');
+    const opTxt = o.op ? String(o.op)+' ' : '';
+    return `<div class="ef-chart-card">
+      <h4>${esc(name)}</h4>
+      <div class="sub">Valores por ano · limite: ${esc(opTxt+limTxt)}</div>
+      <div class="ef-svg-wrap">${efChartSvg(years, values, bounds)}</div>
+      <div class="ef-legend">
+        <span><i style="background:#1A4F36"></i> ${esc(selectedEfSystem==='CSAO'?'CSAO':'Fossa / Filtro')}</span>
+        <span><i class="lim"></i> limite</span>
+      </div>
+    </div>`;
+  }).join('');
+  const chartsEl = document.getElementById('ef-charts');
+  if(chartsEl) chartsEl.innerHTML = chartHtml || '<div class="empty-state">Sem medições no filtro</div>';
+
   const html = Object.entries(byP).map(([name,o])=>{
-    const avg = o.vals.reduce((a,b)=>a+b,0)/o.vals.length;
+    const all = Object.values(o.byYear).flat();
+    const avg = all.length ? all.reduce((a,b)=>a+b,0)/all.length : 0;
+    const bounds = parseLimitBounds(o.lim, o.op);
+    let status='ok';
+    if(bounds.max!=null && avg>bounds.max) status='crit';
+    else if(bounds.min!=null && avg<bounds.min) status='crit';
     return `<div class="bar-row"><div class="name" title="${esc(name)}">${esc(name)}</div>
-      <div class="bar-track"><div class="bar-fill" style="width:${Math.min(100, avg>0?40+avg%60:5)}%"></div></div>
+      <div class="bar-track"><div class="bar-fill" style="width:${Math.min(100, avg>0?35+Math.min(55,avg):5)}%;background:${status==='crit'?'var(--crit)':'linear-gradient(90deg,var(--navy-2),var(--aqua-2))'}"></div></div>
       <div class="num">${fmtN(avg,2)}</div></div>`;
   }).join('');
   document.getElementById('ef-params').innerHTML = html || '<div class="empty-state">Sem medições no filtro</div>';
@@ -2026,6 +2345,7 @@ function showAppAfterLogin(){
   updateChrome();
   loadAllModulesFromCloud().then(res=>{
     console.info('[MA] Sincronização pós-login concluída', res);
+    renderNotifications();
   });
 }
 function showLoginScreen(){
@@ -2107,6 +2427,18 @@ document.getElementById('btn-ham').onclick = ()=>{
 document.getElementById('scrim').onclick = ()=>toggleSide(false);
 buildSideUnits();
 wireLogin();
+
+document.addEventListener('click', e=>{
+  const t = e.target;
+  if(!t.closest) return;
+  if(!t.closest('#panel-notif') && !t.closest('#btn-notif')){
+    document.getElementById('panel-notif')?.classList.remove('on');
+  }
+  if(!t.closest('#panel-cfg') && !t.closest('#btn-cfg')){
+    document.getElementById('panel-cfg')?.classList.remove('on');
+  }
+});
+
 document.getElementById('modal-lic')?.addEventListener('click', e=>{
   if(e.target && e.target.id === 'modal-lic') closeLicModal();
 });
