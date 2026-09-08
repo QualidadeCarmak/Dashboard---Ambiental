@@ -8,15 +8,16 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --navy:#063D3A; --navy-2:#0A524E; --teal:#0F6B63; --aqua:#14B8A6; --aqua-2:#2DD4BF;
+  /* Verde floresta escuro + dourado (excelência) */
+  --navy:#0B2E1F; --navy-2:#123D2A; --teal:#1A4F36; --aqua:#2D6A4F; --aqua-2:#40916C;
   --gold:#C9A227; --gold-2:#E8C547; --gold-soft:#F5E6B8;
-  --page:#F0F7F5; --card:#FFFFFF; --tint:#E6F4F1; --tint-2:#F4FBFA;
-  --line:#C5DED9; --line-2:#A3CBC4;
-  --ink:#0A1F1D; --ink-2:#3A5552; --muted:#5E7875;
-  --ok:#0D7A5F; --ok-bg:#D8F3EA; --warn:#9A6B00; --warn-bg:#FFF4D6;
+  --page:#F4F6F2; --card:#FFFFFF; --tint:#E8EEE8; --tint-2:#F7F9F5;
+  --line:#D0D9D0; --line-2:#B4C4B4;
+  --ink:#0C1A12; --ink-2:#3D4F42; --muted:#5C6E60;
+  --ok:#1B7A4A; --ok-bg:#D8F0E4; --warn:#9A6B00; --warn-bg:#FFF4D6;
   --urgent:#C05621; --urgent-bg:#FFE8D9; --crit:#B91C1C; --crit-bg:#FEE2E2;
   --off:#64748B; --off-bg:#F1F5F9;
-  --radius:14px; --shadow:0 4px 20px rgba(6,61,58,0.08); --shadow-lg:0 12px 40px rgba(6,61,58,0.12);
+  --radius:14px; --shadow:0 4px 20px rgba(11,46,31,0.08); --shadow-lg:0 12px 40px rgba(11,46,31,0.12);
   --side-w:280px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
@@ -26,7 +27,7 @@ body{
   background:var(--page); color:var(--ink);
   -webkit-font-smoothing:antialiased; min-height:100%;
 }
-::selection{background:var(--aqua);color:#fff}
+::selection{background:var(--gold);color:var(--navy)}
 button,select,input{font-family:inherit}
 
 /* TOPBAR */
@@ -117,7 +118,7 @@ button,select,input{font-family:inherit}
 .guia{
   display:none; min-height:calc(100vh - 56px);
   background:
-    radial-gradient(ellipse 70% 50% at 15% 20%,rgba(20,184,166,.18),transparent 55%),
+    radial-gradient(ellipse 70% 50% at 15% 20%,rgba(64,145,108,.16),transparent 55%),
     radial-gradient(ellipse 60% 40% at 90% 80%,rgba(201,162,39,.12),transparent 50%),
     linear-gradient(155deg,var(--navy) 0%,var(--navy-2) 45%,var(--teal) 100%);
   color:#fff; padding:48px 28px 56px; margin-top:56px;
@@ -261,7 +262,7 @@ button,select,input{font-family:inherit}
 .bar-row .name{width:120px;flex-shrink:0;font-size:11.5px;color:var(--ink-2);text-align:right;
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .bar-track{flex:1;background:var(--tint);border-radius:6px;height:12px;overflow:hidden}
-.bar-fill{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--navy-2),var(--aqua))}
+.bar-fill{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--navy-2),var(--aqua-2))}
 .bar-row .num{width:72px;font-size:11.5px;font-weight:700;color:var(--navy);text-align:right}
 
 /* BADGES */
@@ -297,7 +298,7 @@ table.data tr.row-urgent td{background:rgba(192,86,33,.04)}
   border:1px solid var(--line-2);border-radius:8px;padding:7px 12px;font-size:13px;
   background:#fff;color:var(--ink);min-width:120px;cursor:pointer;
 }
-.f-group select:focus{outline:2px solid var(--aqua);outline-offset:1px}
+.f-group select:focus{outline:2px solid var(--gold);outline-offset:1px}
 
 .ef-tabs{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
 .ef-tab{
@@ -329,6 +330,59 @@ table.data tr.row-urgent td{background:rgba(192,86,33,.04)}
 }
 .section-label::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--gold-soft),transparent)}
 
+
+/* LOGIN */
+#login{
+  position:fixed; inset:0; z-index:9999;
+  background:linear-gradient(155deg,var(--navy) 0%,var(--navy-2) 50%,var(--teal) 100%);
+  display:flex; align-items:center; justify-content:center; padding:1.5rem;
+}
+#login.hidden{display:none}
+.login-card{
+  width:100%; max-width:400px;
+  background:rgba(255,255,255,.07); border:1px solid rgba(201,162,39,.4);
+  border-radius:18px; padding:2rem; backdrop-filter:blur(14px); text-align:center;
+  box-shadow:0 20px 60px rgba(0,0,0,.25);
+}
+.login-card .login-mark{
+  width:52px; height:52px; border-radius:14px; margin:0 auto 14px;
+  background:linear-gradient(145deg,var(--gold),var(--gold-2));
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:18px; color:var(--navy);
+}
+.login-card h1{color:#fff; font-family:'Space Grotesk',sans-serif; font-size:1.15rem; margin-bottom:.25rem}
+.login-card .sub{color:var(--gold-soft); font-size:.82rem; margin-bottom:1.25rem}
+.login-card label{display:block; text-align:left; color:var(--gold-soft); font-size:.75rem; font-weight:600; margin-bottom:.25rem}
+.login-card input{
+  width:100%; padding:.7rem .9rem; border-radius:10px;
+  border:1px solid rgba(201,162,39,.35); margin-bottom:.9rem; font-size:.95rem;
+  background:rgba(255,255,255,.95); color:var(--ink);
+}
+.login-card .btn-login{
+  width:100%; padding:.8rem; border:none; border-radius:10px;
+  background:linear-gradient(135deg,var(--gold),var(--gold-2));
+  color:var(--navy); font-weight:800; cursor:pointer; font-size:1rem;
+}
+.login-card .btn-login:hover{filter:brightness(1.05)}
+.login-err{display:none; background:rgba(185,28,28,.35); color:#fecaca; padding:.55rem; border-radius:8px; font-size:.85rem; margin-bottom:.75rem}
+.login-err.show{display:block}
+
+body.on-guia .btn-ham{visibility:hidden; pointer-events:none; opacity:0}
+body.on-guia .side, body.on-guia .scrim{display:none!important}
+
+/* Dual bar chart */
+.dual-bars{display:flex; flex-direction:column; gap:10px}
+.dual-row{display:grid; grid-template-columns:90px 1fr 72px; gap:8px; align-items:center}
+.dual-row .dn{font-size:11px; color:var(--ink-2); text-align:right; font-weight:600}
+.dual-tracks{display:flex; flex-direction:column; gap:3px}
+.dual-tracks .dt{height:9px; border-radius:4px; background:var(--tint); overflow:hidden}
+.dual-tracks .df{height:100%; border-radius:4px}
+.dual-tracks .df.custo{background:linear-gradient(90deg,#7A2E28,#B91C1C)}
+.dual-tracks .df.rec{background:linear-gradient(90deg,var(--navy-2),var(--aqua-2))}
+.dual-row .dv{font-size:10.5px; color:var(--muted); line-height:1.25}
+.chart-box{max-width:100%; overflow:hidden}
+.chart-box .chart-svg{max-height:180px; width:100%; height:auto; display:block}
+
 @media print{
   .topbar,.side,.scrim,.btn-ham{display:none!important}
   .main{margin:0;padding:12px}
@@ -337,7 +391,24 @@ table.data tr.row-urgent td{background:rgba(192,86,33,.04)}
 }
 </style>
 </head>
-<body>
+<body class="on-guia">
+
+<!-- LOGIN -->
+<div id="login">
+  <div class="login-card">
+    <div class="login-mark">CA</div>
+    <h1>Meio Ambiente · Carmak</h1>
+    <p class="sub">Acesso ao painel gerencial ambiental</p>
+    <div class="login-err" id="login-err">Usuário ou senha inválidos</div>
+    <form id="login-form" autocomplete="on">
+      <label for="login-user">E-mail</label>
+      <input type="email" id="login-user" placeholder="meioambiente@carmak.com.br" required>
+      <label for="login-pass">Senha</label>
+      <input type="password" id="login-pass" placeholder="••••••••" required>
+      <button type="submit" class="btn-login">Entrar</button>
+    </form>
+  </div>
+</div>
 
 <!-- TOPBAR -->
 <div class="topbar">
@@ -401,7 +472,7 @@ table.data tr.row-urgent td{background:rgba(192,86,33,.04)}
 </aside>
 
 <!-- GUIA -->
-<div class="guia on" id="view-guia">
+<div class="guia" id="view-guia">
   <div class="guia-inner">
     <div class="guia-badge">GESTÃO AMBIENTAL</div>
     <h1 class="guia-title">Painel Executivo de Meio Ambiente</h1>
@@ -674,6 +745,7 @@ function filteredDocs(){
 
 /* Side menu */
 function toggleSide(force){
+  if(document.body.classList.contains('on-guia') && force!==false) return;
   const side = document.getElementById('side');
   const scrim = document.getElementById('scrim');
   const on = force===true ? true : force===false ? false : !side.classList.contains('on');
@@ -738,6 +810,7 @@ function goHome(){
   selectedModule = null; selectedUnit = ''; screen = 'guia';
   hideAll();
   document.getElementById('view-guia').classList.add('on');
+  document.body.classList.add('on-guia');
   updateChrome();
   toggleSide(false);
   window.scrollTo({top:0,behavior:'smooth'});
@@ -748,6 +821,7 @@ function pickModule(mod){
   selectedEfSystem = 'CSAO';
   screen = 'data';
   hideAll();
+  document.body.classList.remove('on-guia');
   document.getElementById('view-'+mod).classList.add('on');
   updateChrome();
   renderFilters();
@@ -758,13 +832,13 @@ function pickModule(mod){
 function pickUnit(unit){
   selectedUnit = unit || '';
   if(!selectedModule){
-    // if no module, open licencas as default strategic view? stay and wait
     toggleSide(false);
     updateChrome();
     return;
   }
   screen = 'data';
   hideAll();
+  document.body.classList.remove('on-guia');
   document.getElementById('view-'+selectedModule).classList.add('on');
   updateChrome();
   renderFilters();
@@ -848,7 +922,7 @@ function barList(items, maxKey){
 }
 function pieSvg(parts){
   const total = parts.reduce((s,p)=>s+p.v,0) || 1;
-  const colors = ['#0A524E','#14B8A6','#C9A227','#0F6B63','#2DD4BF','#8B6914','#3A5552','#5E7875'];
+  const colors = ['#0B2E1F','#1A4F36','#C9A227','#2D6A4F','#40916C','#8B6914','#3D4F42','#5C6E60'];
   let ang = 0;
   const r=54, cx=60, cy=60;
   const paths = parts.map((p,i)=>{
@@ -864,26 +938,52 @@ function pieSvg(parts){
   const legend = parts.map((p,i)=>`<span><i style="background:${colors[i%colors.length]}"></i>${esc(p.name)} <b>${((p.v/total)*100).toFixed(0)}%</b></span>`).join('');
   return `<div class="pie-wrap"><svg width="120" height="120" viewBox="0 0 120 120">${paths}</svg><div class="pie-legend">${legend}</div></div>`;
 }
+function dualBarChart(labels, custos, receitas){
+  if(!labels.length) return '<div class="empty-state">Sem dados</div>';
+  const max = Math.max(...custos, ...receitas, 0.001);
+  const rows = labels.map((lb,i)=>{
+    const c = custos[i]||0, r = receitas[i]||0;
+    const pc = Math.max(2, (c/max)*100), pr = Math.max(2, (r/max)*100);
+    return `<div class="dual-row">
+      <div class="dn">${esc(String(lb).slice(0,3))}</div>
+      <div class="dual-tracks">
+        <div class="dt"><div class="df custo" style="width:${pc}%"></div></div>
+        <div class="dt"><div class="df rec" style="width:${pr}%"></div></div>
+      </div>
+      <div class="dv"><span style="color:#B91C1C">${fmtR(c)}</span><br><span style="color:var(--ok)">${fmtR(r)}</span></div>
+    </div>`;
+  }).join('');
+  return `<div class="dual-bars">
+    <div class="legend" style="margin-bottom:6px">
+      <span><i style="background:#B91C1C"></i> Custo destinação</span>
+      <span><i style="background:var(--aqua-2)"></i> Receita valorização</span>
+    </div>
+    ${rows}
+  </div>`;
+}
+
 function lineChart(labels, values, unit){
   if(!labels.length) return '<div class="empty-state">Sem dados</div>';
-  const w=560, h=160, pad=28;
+  const w=640, h=140, padL=36, padR=12, padT=18, padB=28;
   const max = Math.max(...values, 0.001);
   const pts = values.map((v,i)=>{
-    const x = pad + (i/(Math.max(labels.length-1,1)))*(w-pad*2);
-    const y = h-pad - (v/max)*(h-pad*2);
+    const x = padL + (i/(Math.max(labels.length-1,1)))*(w-padL-padR);
+    const y = padT + (1 - v/max)*(h-padT-padB);
     return [x,y];
   });
   const poly = pts.map(p=>p.join(',')).join(' ');
-  const circles = pts.map((p,i)=>`<circle cx="${p[0]}" cy="${p[1]}" r="3.5" fill="#14B8A6"/><title>${labels[i]}: ${values[i]}</title>`).join('');
+  const area = pts[0][0]+','+(h-padB)+' '+poly+' '+pts[pts.length-1][0]+','+(h-padB);
+  const circles = pts.map((p,i)=>`<circle cx="${p[0]}" cy="${p[1]}" r="3" fill="#C9A227" stroke="#0B2E1F" stroke-width="1"/><title>${labels[i]}: ${values[i]}</title>`).join('');
   const xlabels = labels.map((lb,i)=>{
-    const x = pad + (i/(Math.max(labels.length-1,1)))*(w-pad*2);
-    return `<text class="axis-label" x="${x}" y="${h-6}" text-anchor="middle">${esc(String(lb).slice(0,3))}</text>`;
+    const x = padL + (i/(Math.max(labels.length-1,1)))*(w-padL-padR);
+    return `<text class="axis-label" x="${x}" y="${h-8}" text-anchor="middle">${esc(String(lb).slice(0,3))}</text>`;
   }).join('');
-  return `<svg class="chart-svg" viewBox="0 0 ${w} ${h}" preserveAspectRatio="xMidYMid meet">
-    <polyline fill="none" stroke="#0A524E" stroke-width="2.5" points="${poly}"/>
+  return `<div class="chart-box"><svg class="chart-svg" viewBox="0 0 ${w} ${h}" preserveAspectRatio="xMidYMid meet" width="100%" height="140">
+    <polygon fill="rgba(26,79,54,0.12)" points="${area}"/>
+    <polyline fill="none" stroke="#1A4F36" stroke-width="2.2" points="${poly}"/>
     ${circles}${xlabels}
-    <text class="axis-label" x="${pad}" y="14">${unit||''}</text>
-  </svg>`;
+    <text class="axis-label" x="${padL}" y="12">${unit||''}</text>
+  </svg></div>`;
 }
 
 /* ---- RENDER RESÍDUOS ---- */
@@ -951,8 +1051,11 @@ function renderFinancas(){
   rec.forEach(r=>{if(r.Mês) byMesR[r.Mês]+=(+r['Receita (R$)']||0)});
   const mesesP = MES_ORD.filter(m=>byMesC[m]>0||byMesR[m]>0);
   // simple dual as cost line
-  document.getElementById('chart-fin-mes').innerHTML = lineChart(mesesP, mesesP.map(m=>byMesC[m]), 'R$ custo') +
-    '<div style="margin-top:8px;font-size:11px;color:var(--muted)">Linha principal: custos de destinação. Receitas mensais: '+mesesP.map(m=>m.slice(0,3)+' '+fmtR(byMesR[m])).join(' · ')+'</div>';
+  document.getElementById('chart-fin-mes').innerHTML = dualBarChart(
+    mesesP,
+    mesesP.map(m=>byMesC[m]),
+    mesesP.map(m=>byMesR[m])
+  );
 
   const byUn = {};
   res.forEach(r=>{const k=r.Unidade||'—'; byUn[k]=byUn[k]||{c:0,r:0}; byUn[k].c+=(+r['Total (R$)']||0)});
@@ -1073,7 +1176,7 @@ function renderLicencas(){
   document.getElementById('lic-compliance').innerHTML = `
     <div class="comp-ring">
       <svg width="120" height="120" viewBox="0 0 120 120">
-        <circle cx="60" cy="60" r="42" fill="none" stroke="#E6F4F1" stroke-width="10"/>
+        <circle cx="60" cy="60" r="42" fill="none" stroke="#E8EEE8" stroke-width="10"/>
         <circle cx="60" cy="60" r="42" fill="none" stroke="#C9A227" stroke-width="10"
           stroke-dasharray="${dash} ${circ}" stroke-linecap="round"/>
       </svg>
@@ -1153,9 +1256,52 @@ function renderLicencas(){
 }
 
 /* Boot */
-document.getElementById('btn-ham').onclick = ()=>toggleSide();
+const AUTH_USER = 'meioambiente@carmak.com.br';
+const AUTH_PASS = '@teste';
+const LS_AUTH = 'carmak_ma_auth';
+
+function isAuthed(){
+  try{ return sessionStorage.getItem(LS_AUTH)==='1'; }catch(e){ return false; }
+}
+function doLogin(email, pass){
+  const ok = String(email||'').trim().toLowerCase()===AUTH_USER && String(pass)===AUTH_PASS;
+  if(!ok) return false;
+  try{ sessionStorage.setItem(LS_AUTH,'1'); }catch(e){}
+  return true;
+}
+function showAppAfterLogin(){
+  document.getElementById('login').classList.add('hidden');
+  document.getElementById('view-guia').classList.add('on');
+  document.body.classList.add('on-guia');
+  updateChrome();
+}
+function wireLogin(){
+  const form = document.getElementById('login-form');
+  if(!form) return;
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    const u = document.getElementById('login-user').value;
+    const p = document.getElementById('login-pass').value;
+    const err = document.getElementById('login-err');
+    if(doLogin(u,p)){
+      err.classList.remove('show');
+      showAppAfterLogin();
+    } else {
+      err.classList.add('show');
+    }
+  });
+}
+
+document.getElementById('btn-ham').onclick = ()=>{
+  if(document.body.classList.contains('on-guia')) return;
+  toggleSide();
+};
 document.getElementById('scrim').onclick = ()=>toggleSide(false);
 buildSideUnits();
+wireLogin();
+if(isAuthed()){
+  showAppAfterLogin();
+}
 updateChrome();
 </script>
 </body>
