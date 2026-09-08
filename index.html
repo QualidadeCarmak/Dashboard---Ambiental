@@ -369,12 +369,25 @@ table.data tr.row-urgent td{background:rgba(192,86,33,.04)}
 
 body.on-guia .btn-ham{visibility:hidden; pointer-events:none; opacity:0}
 body.on-guia .side, body.on-guia .scrim{display:none!important}
-/* Guia: some o bloco .main (evita faixa em branco abaixo dos cards) */
 body.on-guia .main{display:none!important}
-.guia{
-  margin-top:56px;
-  min-height:calc(100vh - 56px);
+/* Fundo verde na Guia — elimina faixa branca sob o gradiente */
+body.on-guia{
+  background:linear-gradient(155deg,var(--navy) 0%,var(--navy-2) 45%,var(--teal) 100%);
+  overflow-x:hidden;
+}
+.guia.on{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  position:fixed;
+  top:56px; left:0; right:0; bottom:0;
+  margin-top:0 !important;
+  min-height:0 !important;
+  height:auto;
+  width:100%;
+  overflow:auto;
   box-sizing:border-box;
+  z-index:1;
 }
 
 /* Dual bar chart */
@@ -614,11 +627,11 @@ body.on-guia .main{display:none!important}
       </button>
       <div class="side-group-body open" id="body-filiais"></div>
     </div>
-    <div class="side-group" id="grp-femsa">
+    <div class="side-group" id="grp-ops">
       <button type="button" class="side-group-btn" onclick="toggleGroup(this)">
-        <span>FEMSAs</span><span class="chev">▾</span>
+        <span>Operações</span><span class="chev">▾</span>
       </button>
-      <div class="side-group-body" id="body-femsa"></div>
+      <div class="side-group-body" id="body-ops"></div>
     </div>
   </div>
   <div class="side-foot">
@@ -953,12 +966,13 @@ const UNIT_META = [
   {"u":"São Leopoldo","t":"Matriz"},
   {"u":"Itajaí","t":"Filial"},{"u":"Triunfo","t":"Filial"},{"u":"Panambi","t":"Filial"},
   {"u":"Chapecó","t":"Filial"},{"u":"Sumaré","t":"Filial"},{"u":"Duque de Caxias","t":"Filial"},
-  {"u":"Camaçari","t":"Filial"},{"u":"Fibraplac","t":"Filial"},
-  {"u":"FEMSA Itaim Paulista","t":"FEMSA"},{"u":"FEMSA Jurubatuba","t":"FEMSA"},
-  {"u":"FEMSA Parque Novo Mundo","t":"FEMSA"},{"u":"FEMSA Jundiaí","t":"FEMSA"},
-  {"u":"FEMSA Aparecida","t":"FEMSA"},{"u":"FEMSA Mogi das Cruzes - Planta","t":"FEMSA"},
-  {"u":"FEMSA Mogi das Cruzes - CD","t":"FEMSA"},{"u":"FEMSA ABC Paulista","t":"FEMSA"},
-  {"u":"FEMSA Porto Alegre","t":"FEMSA"},{"u":"FEMSA Antonio Carlos","t":"FEMSA"}
+  {"u":"Camaçari","t":"Filial"},
+  {"u":"Fibraplac","t":"Operacao"},
+  {"u":"FEMSA Itaim Paulista","t":"Operacao"},{"u":"FEMSA Jurubatuba","t":"Operacao"},
+  {"u":"FEMSA Parque Novo Mundo","t":"Operacao"},{"u":"FEMSA Jundiaí","t":"Operacao"},
+  {"u":"FEMSA Aparecida","t":"Operacao"},{"u":"FEMSA Mogi das Cruzes - Planta","t":"Operacao"},
+  {"u":"FEMSA Mogi das Cruzes - CD","t":"Operacao"},{"u":"FEMSA ABC Paulista","t":"Operacao"},
+  {"u":"FEMSA Porto Alegre","t":"Operacao"},{"u":"FEMSA Antonio Carlos","t":"Operacao"}
 ];
 const MES_ORD = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 
@@ -1085,18 +1099,21 @@ function toggleGroup(btn){
 function buildSideUnits(){
   const bm = document.getElementById('body-matriz');
   const bf = document.getElementById('body-filiais');
-  const be = document.getElementById('body-femsa');
-  bm.innerHTML = ''; bf.innerHTML = ''; be.innerHTML = '';
+  const bo = document.getElementById('body-ops');
+  if(bm) bm.innerHTML = '';
+  if(bf) bf.innerHTML = '';
+  if(bo) bo.innerHTML = '';
   UNIT_META.forEach(({u,t})=>{
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.className = 'nav';
-    btn.innerHTML = '<span class="ic">'+(t==='Matriz'?'🏢':t==='FEMSA'?'🏭':'📍')+'</span> '+esc(u);
+    const ic = t==='Matriz' ? '🏢' : t==='Operacao' ? '🏭' : '📍';
+    btn.innerHTML = '<span class="ic">'+ic+'</span> '+esc(u);
     btn.onclick = ()=>pickUnit(u);
     btn.dataset.unit = u;
-    if(t==='Matriz') bm.appendChild(btn);
-    else if(t==='FEMSA') be.appendChild(btn);
-    else bf.appendChild(btn);
+    if(t==='Matriz' && bm) bm.appendChild(btn);
+    else if(t==='Operacao' && bo) bo.appendChild(btn);
+    else if(bf) bf.appendChild(btn);
   });
 }
 function highlightSide(){
@@ -1470,50 +1487,106 @@ function parseLimitBounds(limite, operador){
 
 function buildNotifications(){
   const items = [];
-  // Licenças críticas
+  const today = new Date(); today.setHours(0,0,0,0);
+
   (DATA.docs||[]).forEach(d=>{
+    const tipo = (d['Tipo de Licença']||'Licença').trim() || 'Licença';
+    const loc = (d.Localidade||'').trim() || (d.CNPJ||'Sem localidade');
+    const st = (d.Status||'').trim();
     const x = daysUntil(d['Válida até']);
-    const loc = d.Localidade || '—';
-    const tipo = d['Tipo de Licença'] || 'Licença';
-    if(d.Status==='Inativa'){
-      items.push({lvl:'crit', title:tipo+' inativa', desc:loc, mod:'licencas'});
-    } else if(x!==null && x<0){
-      items.push({lvl:'crit', title:tipo+' vencida', desc:loc+' · há '+Math.abs(x)+' dias', mod:'licencas'});
-    } else if(x!==null && x<=30){
-      items.push({lvl:'urgent', title:tipo+' vence em '+x+'d', desc:loc, mod:'licencas'});
-    } else if(x!==null && x<=90){
-      items.push({lvl:'warn', title:tipo+' em '+x+' dias', desc:loc, mod:'licencas'});
+    const obs = (d.Observações||'').trim();
+
+    if(st==='Inativa'){
+      items.push({
+        lvl:'crit',
+        title: tipo + ' · Inativa',
+        desc: loc + (obs ? ' · ' + obs.slice(0,90) : ' · Regularizar / emitir'),
+        mod:'licencas',
+        sort: 0
+      });
+      return;
+    }
+    if(x!==null && x<0){
+      items.push({
+        lvl:'crit',
+        title: tipo + ' · Vencida há ' + Math.abs(x) + ' dia(s)',
+        desc: loc + ' · válida até ' + fmtDateBR(d['Válida até']),
+        mod:'licencas',
+        sort: 1
+      });
+      return;
+    }
+    if(st==='Em andamento'){
+      items.push({
+        lvl:'warn',
+        title: tipo + ' · Em andamento',
+        desc: loc + (obs ? ' · ' + obs.slice(0,90) : ' · Acompanhar processo'),
+        mod:'licencas',
+        sort: 3
+      });
+    }
+    if(x!==null && x>=0 && x<=30){
+      items.push({
+        lvl:'urgent',
+        title: tipo + ' · Vence em ' + x + ' dia(s)',
+        desc: loc + ' · ' + fmtDateBR(d['Válida até']),
+        mod:'licencas',
+        sort: 2
+      });
+    } else if(x!==null && x>30 && x<=90){
+      items.push({
+        lvl:'warn',
+        title: tipo + ' · Renovar em ' + x + ' dias',
+        desc: loc + ' · ' + fmtDateBR(d['Válida até']),
+        mod:'licencas',
+        sort: 4
+      });
     }
   });
-  // Efluentes fora do limite
+
   (DATA.efluentes||[]).forEach(r=>{
     const b = parseLimitBounds(r.Limite, r['Operador Limite']);
     const v = +r.Valor;
     if(isNaN(v)) return;
-    let out=false;
-    if(b.max!=null && v>b.max) out=true;
-    if(b.min!=null && v<b.min) out=true;
+    let out=false, detail='';
+    if(b.max!=null && v>b.max){ out=true; detail='valor '+fmtN(v,2)+' > limite '+fmtN(b.max,2); }
+    if(b.min!=null && v<b.min){ out=true; detail='valor '+fmtN(v,2)+' < mínimo '+fmtN(b.min,2); }
     if(out){
-      items.push({lvl:'urgent', title:(r.Parâmetro||'Parâmetro')+' fora do limite', desc:(r.Unidade||'')+' · '+r.Sistema+' · '+r.Ano+' · valor '+v, mod:'efluentes'});
+      items.push({
+        lvl:'urgent',
+        title: (r.Parâmetro||'Parâmetro') + ' fora do limite',
+        desc: [r.Unidade, r.Sistema, r.Ano, detail].filter(Boolean).join(' · '),
+        mod:'efluentes',
+        sort: 2
+      });
     }
   });
-  // unique-ish
+
   const seen=new Set();
-  return items.filter(it=>{
-    const k=it.lvl+it.title+it.desc;
-    if(seen.has(k)) return false;
-    seen.add(k); return true;
-  }).slice(0,40);
+  return items
+    .filter(it=>{
+      const k=it.lvl+'|'+it.title+'|'+it.desc;
+      if(seen.has(k)) return false;
+      seen.add(k); return true;
+    })
+    .sort((a,b)=>(a.sort-b.sort) || a.title.localeCompare(b.title,'pt-BR'))
+    .slice(0,50);
 }
 
 function renderNotifications(){
   const items = buildNotifications();
   const list = document.getElementById('notif-list');
   const dot = document.getElementById('notif-dot');
-  if(dot) dot.classList.toggle('on', items.some(i=>i.lvl==='crit'||i.lvl==='urgent'));
+  const crit = items.filter(i=>i.lvl==='crit'||i.lvl==='urgent').length;
+  if(dot) dot.classList.toggle('on', crit>0);
+  const ph = document.querySelector('#panel-notif .ph');
+  if(ph){
+    ph.innerHTML = 'Notificações'+(items.length?' · '+items.length:'')+
+      ' <button type="button" class="btn-ma ghost" style="padding:4px 8px;font-size:11px" onclick="toggleNotifPanel(false)">Fechar</button>';
+  }
   if(!list) return;
   if(!items.length){
-    list.innerHTML = '<div class="notif-item info"><div class="nt">Tudo em dia</div><div class="nd">Nenhum alerta crítico no momento</div></div>';
+    list.innerHTML = '<div class="notif-item info"><div class="nt">Tudo em dia</div><div class="nd">Nenhum alerta de licença ou efluente no momento</div></div>';
     return;
   }
   list.innerHTML = items.map(it=>`
