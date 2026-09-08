@@ -390,6 +390,7 @@ body.on-guia .side, body.on-guia .scrim{display:none!important}
   .view{display:block!important}
 }
 </style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body class="on-guia">
 
@@ -399,7 +400,7 @@ body.on-guia .side, body.on-guia .scrim{display:none!important}
     <div class="login-mark">CA</div>
     <h1>Meio Ambiente · Carmak</h1>
     <p class="sub">Acesso ao painel gerencial ambiental</p>
-    <div class="login-err" id="login-err">Usuário ou senha inválidos</div>
+    <div class="login-err" id="login-err">E-mail ou senha incorretos</div>
     <form id="login-form" autocomplete="on">
       <label for="login-user">E-mail</label>
       <input type="email" id="login-user" placeholder="meioambiente@carmak.com.br" required>
@@ -468,7 +469,12 @@ body.on-guia .side, body.on-guia .scrim{display:none!important}
       <div class="side-group-body" id="body-femsa"></div>
     </div>
   </div>
-  <div class="side-foot">Painel gerencial · Padrão ISO 14001</div>
+  <div class="side-foot">
+    <div style="margin-bottom:8px">Painel gerencial · ISO 14001</div>
+    <button type="button" class="nav" onclick="doLogout()" style="justify-content:center;opacity:.9;font-size:12px;padding:8px">
+      <span class="ic">⎋</span> Sair
+    </button>
+  </div>
 </aside>
 
 <!-- GUIA -->
@@ -1255,41 +1261,92 @@ function renderLicencas(){
   }).join('')||'<tr><td colspan="8" class="empty-state">Sem licenças no filtro</td></tr>';
 }
 
-/* Boot */
-const AUTH_USER = 'meioambiente@carmak.com.br';
-const AUTH_PASS = '@teste';
-const LS_AUTH = 'carmak_ma_auth';
+/* Boot — Supabase Auth */
+const SUPABASE_URL = 'https://rnxqogklpdlnupgttlcu.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJueHFvZ2tscGRsbnVwZ3R0bGN1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg4ODE2ODIsImV4cCI6MjEwNDQ1NzY4Mn0.pU6C01F69Ctmi-g5fcAK2LUJmOnQefxZZeCDL4Fag24';
 
-function isAuthed(){
-  try{ return sessionStorage.getItem(LS_AUTH)==='1'; }catch(e){ return false; }
-}
-function doLogin(email, pass){
-  const ok = String(email||'').trim().toLowerCase()===AUTH_USER && String(pass)===AUTH_PASS;
-  if(!ok) return false;
-  try{ sessionStorage.setItem(LS_AUTH,'1'); }catch(e){}
-  return true;
-}
+const sb = (window.supabase && window.supabase.createClient)
+  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+  : null;
+
+let currentUser = null;
+
 function showAppAfterLogin(){
   document.getElementById('login').classList.add('hidden');
   document.getElementById('view-guia').classList.add('on');
   document.body.classList.add('on-guia');
   updateChrome();
 }
+function showLoginScreen(){
+  document.getElementById('login').classList.remove('hidden');
+  document.getElementById('view-guia').classList.remove('on');
+  document.querySelectorAll('.main .view').forEach(el=>el.classList.remove('on'));
+  document.body.classList.add('on-guia');
+  toggleSide(false);
+  updateChrome();
+}
+async function doLogout(){
+  try{ if(sb) await sb.auth.signOut(); }catch(e){ console.warn(e); }
+  currentUser = null;
+  showLoginScreen();
+}
+function setLoginBusy(busy, msg){
+  const btn = document.querySelector('#login-form .btn-login');
+  const err = document.getElementById('login-err');
+  if(btn){ btn.disabled = !!busy; btn.textContent = busy ? (msg||'Entrando…') : 'Entrar'; }
+  if(!busy && err) err.classList.remove('show');
+}
+function showLoginError(text){
+  const err = document.getElementById('login-err');
+  if(!err) return;
+  err.textContent = text || 'Usuário ou senha inválidos';
+  err.classList.add('show');
+}
 function wireLogin(){
   const form = document.getElementById('login-form');
   if(!form) return;
-  form.addEventListener('submit', function(e){
+  form.addEventListener('submit', async function(e){
     e.preventDefault();
-    const u = document.getElementById('login-user').value;
-    const p = document.getElementById('login-pass').value;
-    const err = document.getElementById('login-err');
-    if(doLogin(u,p)){
-      err.classList.remove('show');
+    const u = (document.getElementById('login-user').value||'').trim();
+    const p = document.getElementById('login-pass').value||'';
+    if(!sb){
+      showLoginError('SDK Supabase não carregou. Verifique a internet e recarregue (F5).');
+      return;
+    }
+    setLoginBusy(true);
+    try{
+      const { data, error } = await sb.auth.signInWithPassword({ email: u, password: p });
+      if(error){
+        console.warn(error);
+        const msg = /invalid login|invalid credentials/i.test(error.message||'')
+          ? 'E-mail ou senha incorretos'
+          : (error.message || 'Falha no login');
+        showLoginError(msg);
+        setLoginBusy(false);
+        return;
+      }
+      currentUser = data.user || null;
+      setLoginBusy(false);
       showAppAfterLogin();
-    } else {
-      err.classList.add('show');
+    }catch(err){
+      console.error(err);
+      showLoginError('Erro de conexão com o Supabase');
+      setLoginBusy(false);
     }
   });
+}
+async function restoreSession(){
+  if(!sb) return false;
+  try{
+    const { data, error } = await sb.auth.getSession();
+    if(error){ console.warn(error); return false; }
+    if(data && data.session && data.session.user){
+      currentUser = data.session.user;
+      showAppAfterLogin();
+      return true;
+    }
+  }catch(e){ console.warn(e); }
+  return false;
 }
 
 document.getElementById('btn-ham').onclick = ()=>{
@@ -1299,10 +1356,19 @@ document.getElementById('btn-ham').onclick = ()=>{
 document.getElementById('scrim').onclick = ()=>toggleSide(false);
 buildSideUnits();
 wireLogin();
-if(isAuthed()){
-  showAppAfterLogin();
+restoreSession().then(ok=>{
+  if(!ok) updateChrome();
+});
+if(sb){
+  sb.auth.onAuthStateChange((event, session)=>{
+    if(event==='SIGNED_OUT'){
+      currentUser = null;
+      showLoginScreen();
+    } else if(event==='SIGNED_IN' && session){
+      currentUser = session.user;
+    }
+  });
 }
-updateChrome();
 </script>
 </body>
 </html>
